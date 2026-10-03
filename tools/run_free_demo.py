@@ -76,6 +76,34 @@ def check_local_requirements(env: dict[str, str]) -> None:
     )
     if result.returncode:
         raise RuntimeError("Moin public preflight failed:\n" + result.stderr.strip())
+    check_groq_credentials(env)
+
+
+def check_groq_credentials(env: dict[str, str], opener=urlopen) -> None:
+    """Check the chosen ASR key before advertising a working public demo.
+
+    A model lookup has no audio usage. Never include the response body or key
+    in an error because provider responses can contain account details.
+    """
+    request = Request(
+        "https://api.groq.com/openai/v1/models/whisper-large-v3",
+        headers={"Authorization": f"Bearer {env['GROQ_API_KEY']}"},
+    )
+    context = ssl.create_default_context(cafile=certifi.where())
+    try:
+        with opener(request, timeout=12, context=context) as response:
+            if response.status != 200:
+                raise RuntimeError("Groq could not confirm Whisper large-v3 availability.")
+    except HTTPError as error:
+        if error.code in (401, 403):
+            raise RuntimeError(
+                "Groq rejected the API key. Stop this run and restart with a fresh "
+                "Groq key from console.groq.com/keys. If GROQ_API_KEY is set in "
+                "your shell, unset it first so the launcher prompts again."
+            ) from None
+        raise RuntimeError(f"Groq model check failed (HTTP {error.code}). Retry shortly.") from None
+    except (URLError, TimeoutError, OSError):
+        raise RuntimeError("Could not reach Groq to check the API key. Check the network and retry.") from None
 
 
 def free_port() -> int:
