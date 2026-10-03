@@ -33,6 +33,7 @@ BASE = ROOT / "base-station"
 PYTHON = BASE / ".venv/bin/python"
 STORAGE = BASE / "studio-runs/public-demo"
 LEDGER = BASE / "studio-runs/public-demo-ledger"
+URL_FILE = STORAGE / "public-demo-url.txt"
 URL_PATTERN = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com\b")
 KEYS = (
     ("GROQ_API_KEY", "Groq API key"),
@@ -161,6 +162,7 @@ def main() -> int:
     cloudflared: subprocess.Popen[str] | None = None
     moin: subprocess.Popen[str] | None = None
     try:
+        URL_FILE.unlink(missing_ok=True)
         env = provider_environment()
         check_local_requirements(env)
         if args.check_only:
@@ -187,6 +189,7 @@ def main() -> int:
         for page in ("/haramain", "/live"):
             wait_for_page(public_url + page, timeout=20)
 
+        URL_FILE.write_text(public_url + "\n", encoding="utf-8")
         print("\nMoin public demo is ready:", public_url, flush=True)
         print("Keep this Mac awake, connected, and this Terminal open.")
         print("Anyone with the link can use the demo and consume provider free-tier quotas.")
@@ -202,6 +205,7 @@ def main() -> int:
         print(str(error), file=sys.stderr)
         return 1
     finally:
+        URL_FILE.unlink(missing_ok=True)
         stop(moin)
         stop(cloudflared)
 

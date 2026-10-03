@@ -39,6 +39,10 @@ public configuration before opening a tunnel. It waits until the Studio,
 Haramain, and Live pages respond through the public URL, then opens the browser
 and prints the link for the judges. Press Ctrl+C to stop both processes. The
 temporary URL stops working and must not be submitted as a permanent link.
+After the pages are reachable, the launcher also writes the temporary URL to
+the ignored local file `base-station/studio-runs/public-demo/public-demo-url.txt`
+so it can be checked without copying it from Terminal. It removes the file on
+normal shutdown.
 Cloudflare Tunnel requires outbound TCP or UDP port 7844. The current campus
 network's connectivity check blocked both protocols; connect the Mac to an
 iPhone hotspot or another network if the command reports that error.
