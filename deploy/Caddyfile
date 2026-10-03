@@ -1,0 +1,10 @@
+{$MOIN_PUBLIC_HOST} {
+    encode zstd gzip
+    request_body {
+        max_size 70MB
+    }
+    reverse_proxy moin:8787 {
+        header_up Host {host}
+        header_up X-Moin-Client-IP {remote_host}
+    }
+}

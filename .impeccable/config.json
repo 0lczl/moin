@@ -1,0 +1,39 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "base-station/moin_studio/static/haramain/index.html",
+          "base-station/moin_studio/static/index.html",
+          "base-station/moin_studio/static/live/index.html"
+        ],
+        "createdAt": "2026-10-03T15:47:56.310Z",
+        "reason": "User selected the official presentation identity; DESIGN-GUIDE.md specifies #F5F3EE as the main background."
+      },
+      {
+        "rule": "repeating-stripes-gradient",
+        "value": "*",
+        "files": [
+          "base-station/moin_studio/static/live/index.html"
+        ],
+        "createdAt": "2026-10-03T15:48:49.316Z",
+        "reason": "QR failure placeholder uses stripes as a functional error state when no scannable code exists, not surface decoration."
+      },
+      {
+        "rule": "wide-tracking",
+        "value": "*",
+        "files": [
+          "base-station/moin_studio/static/haramain/index.html",
+          "base-station/moin_studio/static/index.html",
+          "base-station/moin_studio/static/live/index.html"
+        ],
+        "createdAt": "2026-10-03T15:48:53.834Z",
+        "reason": "DESIGN-GUIDE.md permits Latin uppercase tracking; detected uses are short uppercase workspace, status, and navigation labels, not running body copy."
+      }
+    ]
+  }
+}

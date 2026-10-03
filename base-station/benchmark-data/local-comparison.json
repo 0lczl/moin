@@ -1,0 +1,92 @@
+[
+  {
+    "id": "baseline",
+    "name": "Current baseline: Whisper small + NLLB 600M",
+    "adapter": "baseline",
+    "asr": {
+      "model": "Systran/faster-whisper-small",
+      "revision": "536b0662742c02347bc0e980a01041f333bce120",
+      "device": "cpu",
+      "compute_type": "int8",
+      "beam_size": 1,
+      "vad_filter": false
+    },
+    "translation": {
+      "model": "facebook/nllb-200-distilled-600M",
+      "revision": "f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+      "source_lang": "arb_Arab",
+      "max_new_tokens": 256,
+      "num_beams": 1
+    },
+    "settings": {"timeout_seconds": 120},
+    "prompts": {"en": "", "fr": ""}
+  },
+  {
+    "id": "local-qwen",
+    "name": "Local Whisper small + Qwen 2.5 7B Instruct 4-bit",
+    "adapter": "local-qwen",
+    "asr": {
+      "model": "Systran/faster-whisper-small",
+      "revision": "536b0662742c02347bc0e980a01041f333bce120",
+      "device": "cpu",
+      "compute_type": "int8",
+      "beam_size": 1,
+      "vad_filter": false
+    },
+    "translation": {
+      "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+      "revision": "c26a38f6a37d0a51b4e9a1eb3026530fa35d9fed",
+      "max_new_tokens": 1024
+    },
+    "settings": {"timeout_seconds": 120},
+    "prompts": {
+      "en": "Translate the Arabic text faithfully into English. Preserve its meaning and tone. Return only the English translation, with no explanation or commentary.",
+      "fr": "Traduisez fidèlement le texte arabe en français, en préservant son sens et son ton. Répondez uniquement avec la traduction française, sans explication ni commentaire."
+    }
+  },
+  {
+    "id": "local-translategemma",
+    "name": "Provisional local TranslateGemma 4B 4-bit",
+    "adapter": "local-translategemma",
+    "asr": {
+      "model": "Systran/faster-whisper-large-v3",
+      "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+      "device": "cpu",
+      "compute_type": "int8",
+      "beam_size": 5,
+      "vad_filter": false
+    },
+    "translation": {
+      "model": "mlx-community/translategemma-4b-it-4bit",
+      "revision": "5788ec08c047f3f2e17808101b8d9566ac930d58",
+      "max_new_tokens": 1024
+    },
+    "settings": {"timeout_seconds": 120},
+    "prompts": {"en": "", "fr": ""}
+  },
+  {
+    "id": "deepl-v1",
+    "name": "Whisper large-v3 + DeepL API Free v2",
+    "adapter": "deepl",
+    "asr": {
+      "model": "Systran/faster-whisper-large-v3",
+      "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+      "device": "cpu",
+      "compute_type": "int8",
+      "beam_size": 5,
+      "vad_filter": false
+    },
+    "translation": {
+      "model": "deepl-text-translation-api",
+      "revision": "v2",
+      "base_url": "https://api-free.deepl.com",
+      "endpoint": "/v2/translate",
+      "credential_env": "DEEPL_AUTH_KEY",
+      "source_lang": "AR",
+      "target_lang_en": "EN-US",
+      "target_lang_fr": "FR"
+    },
+    "settings": {"timeout_seconds": 60},
+    "prompts": {"en": "", "fr": ""}
+  }
+]

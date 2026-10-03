@@ -1,0 +1,53 @@
+[
+  {
+    "id": "baseline",
+    "name": "Current baseline: Whisper small + NLLB 600M",
+    "adapter": "baseline",
+    "asr": {
+      "model": "Systran/faster-whisper-small",
+      "revision": "536b0662742c02347bc0e980a01041f333bce120",
+      "device": "cpu",
+      "compute_type": "int8",
+      "beam_size": 1,
+      "vad_filter": false
+    },
+    "translation": {
+      "model": "facebook/nllb-200-distilled-600M",
+      "revision": "f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+      "source_lang": "arb_Arab",
+      "max_new_tokens": 256,
+      "num_beams": 1
+    },
+    "settings": {
+      "timeout_seconds": 120
+    },
+    "prompts": {
+      "en": "",
+      "fr": ""
+    }
+  },
+  {
+    "id": "openai",
+    "name": "OpenAI mini-transcribe 2025-12-15 + GPT-4.1 2025-04-14",
+    "adapter": "openai-compatible",
+    "asr": {
+      "model": "gpt-4o-mini-transcribe-2025-12-15",
+      "revision": "gpt-4o-mini-transcribe-2025-12-15",
+      "base_url": "https://api.openai.com/v1",
+      "credential_env": "OPENAI_API_KEY"
+    },
+    "translation": {
+      "model": "gpt-4.1-2025-04-14",
+      "revision": "gpt-4.1-2025-04-14",
+      "base_url": "https://api.openai.com/v1",
+      "credential_env": "OPENAI_API_KEY"
+    },
+    "settings": {
+      "timeout_seconds": 120
+    },
+    "prompts": {
+      "en": "Translate the Arabic religious teaching into English. Preserve intended meaning, negations, religious claims, and Islamic terminology. Do not add commentary or invent missing content. Output only the translation.",
+      "fr": "Translate the Arabic religious teaching into French. Preserve intended meaning, negations, religious claims, and Islamic terminology. Do not add commentary or invent missing content. Output only the translation."
+    }
+  }
+]

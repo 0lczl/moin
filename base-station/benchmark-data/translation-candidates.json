@@ -1,0 +1,40 @@
+[
+  {
+    "id": "local-nllb",
+    "name": "NLLB 200 distilled 600M (local)",
+    "adapter": "local-nllb",
+    "model": "facebook/nllb-200-distilled-600M",
+    "revision": "f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+    "settings": {}
+  },
+  {
+    "id": "local-qwen",
+    "name": "Qwen 2.5 7B Instruct 4-bit (local)",
+    "adapter": "local-qwen",
+    "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+    "revision": "c26a38f6a37d0a51b4e9a1eb3026530fa35d9fed",
+    "settings": {}
+  },
+  {
+    "id": "local-translategemma",
+    "name": "TranslateGemma 4B 4-bit (provisional local)",
+    "adapter": "local-translategemma",
+    "model": "mlx-community/translategemma-4b-it-4bit",
+    "revision": "5788ec08c047f3f2e17808101b8d9566ac930d58",
+    "settings": {}
+  },
+  {
+    "id": "google-cloud-nmt",
+    "name": "Google Cloud Translation NMT (paid API; provisional)",
+    "adapter": "google-cloud-nmt",
+    "model": "projects/{project}/locations/global/models/general/nmt",
+    "revision": "general/nmt",
+    "settings": {
+      "project_env": "MOIN_GOOGLE_CLOUD_PROJECT",
+      "timeout_seconds": 60,
+      "source_language": "ar",
+      "target_languages": ["en", "fr"],
+      "max_pilot_characters": 50000
+    }
+  }
+]

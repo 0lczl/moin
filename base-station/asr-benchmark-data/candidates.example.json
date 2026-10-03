@@ -1,0 +1,44 @@
+[
+  {
+    "id": "whisper-small",
+    "name": "Whisper small (pinned CPU int8)",
+    "adapter": "faster-whisper",
+    "model": {
+      "repository": "Systran/faster-whisper-small",
+      "revision": "536b0662742c02347bc0e980a01041f333bce120"
+    },
+    "runtime": {
+      "device": "cpu",
+      "compute_type": "int8"
+    },
+    "settings": {
+      "language": "ar",
+      "task": "transcribe",
+      "beam_size": 5,
+      "temperature": 0,
+      "vad_filter": false,
+      "condition_on_previous_text": true
+    }
+  },
+  {
+    "id": "whisper-large-v3",
+    "name": "Whisper large-v3 (pinned CPU int8)",
+    "adapter": "faster-whisper",
+    "model": {
+      "repository": "Systran/faster-whisper-large-v3",
+      "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478"
+    },
+    "runtime": {
+      "device": "cpu",
+      "compute_type": "int8"
+    },
+    "settings": {
+      "language": "ar",
+      "task": "transcribe",
+      "beam_size": 5,
+      "temperature": 0,
+      "vad_filter": false,
+      "condition_on_previous_text": true
+    }
+  }
+]

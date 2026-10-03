@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#16311f">
+  <title>Moin — Live Mosque Translator</title>
+  <link rel="stylesheet" href="/brand/presentation/fonts.css">
+  <link rel="stylesheet" href="/live/style.css">
+</head>
+<body>
+  <aside class="sidebar" aria-label="Moin navigation">
+    <a class="brand" href="/" aria-label="Moin home"><img src="/brand/presentation/moin-logo.svg" alt="مُعين — Moin"></a>
+    <div class="workspace-label" data-i18n="workspace">YOUR WORKSPACE</div>
+    <a class="nav" href="/"><span aria-hidden="true">◉</span><span data-i18n="recording">Recording studio</span></a>
+    <a class="nav" href="/haramain"><span aria-hidden="true">◇</span><span data-i18n="videos">Haramain videos</span></a>
+    <a class="nav active" href="/live" aria-current="page"><span aria-hidden="true">⌁</span><span data-i18n="live">Live translator</span></a>
+    <div class="sidebar-bottom"><span class="status-dot"></span><span data-i18n="onDevice">Private by design</span><p data-i18n="sidebarNote">A simple way to follow a live gathering.</p><small data-i18n="experimental">Phase 1 · room sharing</small></div>
+  </aside>
+  <main>
+    <header><span><span data-i18n="workspace">WORKSPACE</span><span class="slash">/</span><span data-i18n="live">LIVE TRANSLATOR</span></span><div class="header-tools"><span class="local-tag"><span class="source-language">AR</span><span class="arrow">→</span><span id="header-target">EN · FR</span></span><div class="language-switch" role="group" aria-label="Interface language"><button type="button" data-ui-lang="en" aria-pressed="true">EN</button><button type="button" data-ui-lang="ar" aria-pressed="false">عربي</button></div></div></header>
+    <section class="intro">
+      <div><h1 data-i18n="headline">Make space for<br>every listener.</h1><p class="lede" data-i18n="intro">Create a room for a live gathering. Share one link so listeners can follow along in English or French.</p></div>
+      <div class="intro-mark" aria-hidden="true"><img src="/brand/presentation/moin-logo.svg" alt=""></div>
+    </section>
+    <section id="app" class="room-area" aria-live="polite" aria-busy="true"><div class="loading"><span class="spinner" aria-hidden="true"></span><span data-i18n="loading">Opening your live room…</span></div></section>
+    <footer><span data-i18n="footer">Made for careful listening.</span><span>MOIN <i>·</i> LIVE TRANSLATOR</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/live/app.js" defer></script>
+</body>
+</html>

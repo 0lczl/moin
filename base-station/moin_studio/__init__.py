@@ -1,0 +1,1 @@
+"""Local Moin recording studio."""

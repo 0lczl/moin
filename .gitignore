@@ -1,0 +1,58 @@
+# OS / editor cruft
+.DS_Store
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Node / JS (the dashboard app)
+node_modules/
+dist/
+.turbo/
+*.local
+
+# Secrets / local config (keep credentials out of git)
+secrets/
+.env
+.env.*
+!.env.example
+!*.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.claude/settings.local.json
+.impeccable/hook.cache.json
+
+# Model + audio artifacts (downloaded/recorded, not committed)
+base-station/models/
+base-station/voices/
+base-station/clips/
+*.wav
+*.mp3
+*.mp4
+*.m4a
+*.flac
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Private benchmark results, blind mappings, and source media
+base-station/benchmark-runs/
+base-station/benchmark-data/staging/
+base-station/benchmark-data/staging-renderings/
+
+# Local machine demonstrations and blind review exports
+base-station/machine-runs/
+base-station/benchmark-review/
+base-station/asr-benchmark-runs/
+base-station/asr-benchmark-data/*.local.json
+
+# Private local studio uploads and results
+base-station/studio-runs/

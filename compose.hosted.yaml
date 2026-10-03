@@ -1,0 +1,46 @@
+services:
+  moin:
+    build:
+      context: .
+      dockerfile: Dockerfile.hosted
+    restart: unless-stopped
+    environment:
+      MOIN_PUBLIC_BASE_URL: https://${MOIN_PUBLIC_HOST:?Set MOIN_PUBLIC_HOST}
+      MOIN_ASR_PROVIDER: groq
+      MOIN_LIVE_ASR: groq
+      MOIN_USAGE_LEDGER_DIR: /data/ledger
+      GROQ_API_KEY: ${GROQ_API_KEY:?Set GROQ_API_KEY}
+      DEEPL_AUTH_KEY: ${DEEPL_AUTH_KEY:?Set DEEPL_AUTH_KEY}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:?Set ELEVENLABS_API_KEY}
+    volumes:
+      - moin_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,uid=10001,gid=10001,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [private]
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      MOIN_PUBLIC_HOST: ${MOIN_PUBLIC_HOST:?Set MOIN_PUBLIC_HOST}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [moin]
+    networks: [private]
+
+networks:
+  private: {}
+
+volumes:
+  moin_data: {}
+  caddy_data: {}
+  caddy_config: {}

@@ -1,0 +1,6 @@
+# Minimal Linux runtime for the hosted, provider-backed pilot.
+# The Mac-only ML packages in requirements.txt are intentionally absent.
+certifi>=2024.2
+rapidfuzz==3.14.6
+yt-dlp>=2025.1.15
+segno==1.6.6

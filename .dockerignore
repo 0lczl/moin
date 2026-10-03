@@ -1,0 +1,14 @@
+.git
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+base-station/studio-runs
+base-station/machine-runs
+base-station/benchmark-runs
+base-station/benchmark-review
+base-station/clips
+base-station/voices
+base-station/models
+base-station/benchmark-data/staging
+base-station/benchmark-data/staging-renderings/raw

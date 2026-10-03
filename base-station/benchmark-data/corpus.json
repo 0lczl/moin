@@ -1,0 +1,381 @@
+[
+  {
+    "id": "XWsDJcbuE5s",
+    "split": "development",
+    "audio": "staging/audio/XWsDJcbuE5s.wav",
+    "sha256": "68127bd4accf152977b5a70df4d10e44367144eac1518bc6c05a19a3ef592243",
+    "speaker": "abdulsalam-al-shuair",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/XWsDJcbuE5s",
+      "title": "Sheikh Abdul Salam Al-Shuway’ir | Private acts of Worship [translation by creator]",
+      "retrieved_at": "2026-09-22T03:53:39.351995+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 39.40425,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "على أن تكون عبادتك في الخفاء أعظم من عبادتك في العلالية هنا في المصلى نجتمع ربما نصلي ونقرا لكن عندما تكون وحدك في مهجع لك أو في مكان بعيد عن أعين الناس هذا هو المحك فكلما كانت العبادة في السر أعظم كلما كان ذلك اصدق وكلما خاف المرء من الرياء فليعمل مثلما عمل علانية في السر من تصدق بريال وخشية الرياء في فليتصدق بآخر في السر فإنه تطهير للأول ويدل على الصدق فيه إذن احرص على عبادات السر في مهجعك في مكانك البعيد",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/XWsDJcbuE5s.txt",
+      "raw_draft_path": "staging/draft-asr/XWsDJcbuE5s.txt"
+    }
+  },
+  {
+    "id": "7WxtiPxZv1w",
+    "split": "development",
+    "audio": "staging/audio/7WxtiPxZv1w.wav",
+    "sha256": "54b7587b2504b01467890d989c35aef052e67e5ac6d9e170bae56c54c599c264",
+    "speaker": "abdulsalam-al-shuair",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/7WxtiPxZv1w",
+      "title": "Shaykh Abdus-Salam As-Shuway’ir حفظه الله - Beautiful Poetry About Allah SWT and a Playful Joke",
+      "retrieved_at": "2026-09-22T03:53:39.354970+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 46.881125,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "وأسأل ما معنى الكراء؟ ما معنى الكراء؟ ابو غتره شمعنى الكراء؟ الذي خلف صاحب الغترة خلف صاحب الغترة خلف صاحب الغترة في بيت شعر جميل يقول يا قبل القبل لا قبل قبله ويابعد بعد البعد والبعد داهر من المراد؟ من المراد؟ من المراد؟ الله جل وعلا فهو الأول ليس قبله شيء وهو الآخر وليس بعده شيء وكلام الله عز وجل أبلغ من كلام هؤلاء الذين كرروا الكلم ما معنى الكراء؟",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/7WxtiPxZv1w.txt",
+      "raw_draft_path": "staging/draft-asr/7WxtiPxZv1w.txt"
+    }
+  },
+  {
+    "id": "oWj_w6LRuUY",
+    "split": "development",
+    "audio": "staging/audio/oWj_w6LRuUY.wav",
+    "sha256": "760f953c0e8d82806dadde0eb13dc11c7b373227092b0eafa620ba73fc10e5e4",
+    "speaker": "abdulsalam-al-shuair",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/oWj_w6LRuUY",
+      "title": "Attaining tranquility in Salah (prayer) | Sheikh Abdussalam Al-Shuway’ir هفظه الله",
+      "retrieved_at": "2026-09-22T03:53:39.357119+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 20.0388125,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech",
+      "islamic-terminology"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "وكيف يفرغ المرء قلبه من شواغل الدنيا في الصلاة أن يبكر لمصلاة قبل الوقت المرء إذا جاء لاهثا مسرعا فسيكون قلبه منشغلا بما كان فيه قبل قليل فكلما أتيت للصلاة قبل وقتها وجدت قلبك متعلق بالخشوع أشد منما لو أتيت إليها متأخرا",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/oWj_w6LRuUY.txt",
+      "raw_draft_path": "staging/draft-asr/oWj_w6LRuUY.txt"
+    }
+  },
+  {
+    "id": "I0tWefiPh-0",
+    "split": "development",
+    "audio": "staging/audio/I0tWefiPh-0.wav",
+    "sha256": "d544b1d622ac79baecd56601a811e7b169f27658507b39a9d73d11ebad01c08c",
+    "speaker": "abdulrazzaq-al-badr",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/I0tWefiPh-0",
+      "title": "The Duaa that the Prophet ﷺ Taught Abubakr as-Siddiq - Sheikh Abdurrazaq al-Badr حفظه الله",
+      "retrieved_at": "2026-09-22T03:53:39.359527+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 20.9211875,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech",
+      "islamic-terminology"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "صديق الأمة رضي الله عنه كما في الصحيحين قال للنبي صلى الله عليه وسلم علمني دعاء أن أدعوا الله به في صلاة وفي رواية وبيتي فماذا علمه؟ قال قل اللهم إني ظلمت نفسي ظلما كثيرا ولايغفر الذنوب إلا أنت فغفرلي مغفرة من عندك وارحمني إنك انت [غير واضح]",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [
+        "Ending fades before الغفور الرحيم is clearly audible; reference preserves [غير واضح]."
+      ],
+      "review_path": "staging/review-transcripts/I0tWefiPh-0.txt",
+      "raw_draft_path": "staging/draft-asr/I0tWefiPh-0.txt"
+    }
+  },
+  {
+    "id": "c5NrOlQ4oig",
+    "split": "development",
+    "audio": "staging/audio/c5NrOlQ4oig.wav",
+    "sha256": "5f6f3f8bbb3812ab7ab4f93c861a29cc7e9214b1bfaa7b1ba78d95d828d7531b",
+    "speaker": "abdulrazzaq-al-badr",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/c5NrOlQ4oig",
+      "title": "I Fear Allah - Shaikh Abdul Razzaq al Badr",
+      "retrieved_at": "2026-09-22T03:53:39.361726+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 36.6295,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech",
+      "islamic-terminology"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "يذكر العبد في هذا المقام وهذا من أعظم المعينات السبعة الذين يظلهم الله في ظله يوم لا ظله إلا ظله منهم شاب دعته امرأة ذات منصب وجمال فقال إني أخاف الله هذه الكلمة إني أخاف الله نجاة للعب دائما يملا قلبه بها ويجعلها سند الله للتوقي من الحرام أخاف الله حتى لا يكتفي أن يجعلها عقيدة في قلبه بل يحدثها من أمامه يقول أخاف الله حتى يحرك الخوف في نفسه وفي من عنده",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/c5NrOlQ4oig.txt",
+      "raw_draft_path": "staging/draft-asr/c5NrOlQ4oig.txt"
+    }
+  },
+  {
+    "id": "Zf4B7Vsk9hA",
+    "split": "development",
+    "audio": "staging/audio/Zf4B7Vsk9hA.wav",
+    "sha256": "1582051fc815fdc7efc949c94838eb66b77c9de91f148c7bbc100d1ca1f43c49",
+    "speaker": "abdulrazzaq-al-badr",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/Zf4B7Vsk9hA",
+      "title": "The greatest deterrent from sins | Shaykh Abdulrazzaq Al-Badr",
+      "retrieved_at": "2026-09-22T03:53:39.364528+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 73.02675,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech",
+      "islamic-terminology"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "ولهذا ذكر ابن رجب رحمه الله في بعض كتبه أن اعرابيا راود أعرابية في الصحراء وقال لها نحن في مكان لا يرانا إلا الكواكب يعني من أي شيء تخافين قالت أين مكوكبها فكف الرجل وامتنع وذكر أن رجل أكرها إمرأة على نفسها وقال لها غلقي الأبواب فغلقت الأبواب قال أغلقت جميع الأبواب قالت نعم إلا باب واحد قال أي باب قالت الباب الذي بيننا وبين الله الباب الذي بيننا وبين الله هذا ما يمكن أن يغلق فكف الرجل كل ما كان العبد مستحضرا لعلم الله سبحانه وتعالى به واطلاعه عليه كان ذلك أكبر زاجر الله وأكبر رادع",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/Zf4B7Vsk9hA.txt",
+      "raw_draft_path": "staging/draft-asr/Zf4B7Vsk9hA.txt"
+    }
+  },
+  {
+    "id": "w_gjJJ0U-oQ",
+    "split": "development",
+    "audio": "staging/audio/w_gjJJ0U-oQ.wav",
+    "sha256": "59900bcec43ec4c42e0548eefb02d71046abeede3796f8a72c21d1a3f5b79588",
+    "speaker": "hassan-bukhari",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/w_gjJJ0U-oQ",
+      "title": "Taking the Quran as a companion | Shaykh Hassan Bukhari",
+      "retrieved_at": "2026-09-22T03:53:39.367354+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 76.3588125,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech",
+      "islamic-terminology",
+      "quran-adjacent"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "نعم فنعمل عبد عبد صحب كتاب الله وكتاب الله وكلامه أجل أنواع الذكر وأعلاه وأسماه كلام الله الذي أنزله على نبيه ومصطفاه صلى الله عليه وسلم أن يكون لك عبد الله كل يوم ورد من كتاب الله فهذا والله من أعظم أبواب التوفيق في الحياة أيعجزك أن تقرأ كل يوم حزبا من القرآن أو جزءا فتختمه كل شهر أو أعلى من ذلك فتضاعف إلى جزئين فتختم في الشهر مرتين أو أكثر من ذلك فيكون لك ورد كما هو شأن الصحابة والسلف الكرام فتختم القرآن كل عشرة أيام أو سبعة والله ما ذلك بصعب ولا عسير لكنه توفيق يحتاج في بداياته لخطوات فيها من الجد والحرص ما يكون بعد ذلك إلفا وعادة وديمومة والموفق من وفقه الله لكن لا تنسى أجور العظام والبركات والثواب العظيم الذي أعده الله لأهل كتابه والمقبلين على كتابه العظيم فمن أحب الله أحب كلامه ومن أحب كلامه لزمه وقرأه واشتغل به في كل حين",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/w_gjJJ0U-oQ.txt",
+      "raw_draft_path": "staging/draft-asr/w_gjJJ0U-oQ.txt"
+    }
+  },
+  {
+    "id": "oCKv130bdDM",
+    "split": "development",
+    "audio": "staging/audio/oCKv130bdDM.wav",
+    "sha256": "5640184bcd2f252d901a8dddc884fba61f461dd85867c0797645a6c1fed62f2d",
+    "speaker": "hassan-bukhari",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/oCKv130bdDM",
+      "title": "SHEIKH HASSAN BUKHARI, with advice you need to hear 🤲🏼 #fyp #alhumdulillah #islam #muslim #deen",
+      "retrieved_at": "2026-09-22T03:53:39.369938+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 45.5691875,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "ولن تكون الحياة كلها من أولها لآخرها أفراحاً وسروراً وكل ما يتمناه العبد ما جعل الله الحياة نعيماً خالصاً وسروراً تاما إلا في الجنة أما في الدنيا فأنت تضحك يوما وتبكي أياماً وتُسر ساعة وتتنكد ساعات وتحزن أحياناً وتفرح أحياناً فمن فطن أدرك أنه في ساعات الألم والحزن بحاجة إلى أن يعيد إلى القلب تماسكة وأعظم ما يملى به تلك الساعة الحرجة أن يحمد الله يحمد الله وهو يعلم أن المصيبة بالفقد أهول من أن يصاب في دينه والعياد بالله فيحمد الله",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/oCKv130bdDM.txt",
+      "raw_draft_path": "staging/draft-asr/oCKv130bdDM.txt"
+    }
+  },
+  {
+    "id": "PnQdtdUYDOg",
+    "split": "development",
+    "audio": "staging/audio/PnQdtdUYDOg.wav",
+    "sha256": "088dde118f7817713c3cebb9645c7108e39d02ecc20672485ae6c091ac98b537",
+    "speaker": "hassan-bukhari",
+    "source": {
+      "uri": "https://www.youtube.com/shorts/PnQdtdUYDOg",
+      "title": "The REAL Reason You’re Missing Barakah in Your Life || Shaykh Dr. Hasan Bukhari",
+      "retrieved_at": "2026-09-22T03:53:39.373079+00:00",
+      "publisher_licence": null
+    },
+    "source_start_seconds": 0,
+    "duration_seconds": 87.744,
+    "permission": {
+      "decision": "permitted",
+      "basis": "User explicitly selected these nine sources, requested local recording and benchmarking, listened to every clip, and instructed continuation. Operational permission is limited to this private local evaluation; publisher reuse licence is unverified and no redistribution permission is asserted.",
+      "reviewer": "project user (instructions in task conversation)",
+      "date": "2026-09-22",
+      "scope": "private-local-benchmark",
+      "publisher_licence_verified": false
+    },
+    "tags": [
+      "ordinary-teaching",
+      "natural-fast-speech",
+      "islamic-terminology",
+      "quran-adjacent"
+    ],
+    "tagging": {
+      "reviewer": "Codex",
+      "basis": "Topics in user-reviewed transcript; natural-fast-speech denotes spontaneous spoken delivery, not a measured speed threshold."
+    },
+    "transcript": {
+      "state": "verified",
+      "text": "وصف الله القرآن بأنه مبارك السؤال ما بركة القرآن نأخذ المصحف نمسح به الوجه نضع نسخة منه في الجيب في السيارة في البيت حتى تحل البركة لا ليس كذلك تنال البركة بقربك من القرآن قراءة تعاهدا تلاوتا تدبرا عملا تخلقا إلى آخره السؤال ما بركة القرآن هي بركة الأجر والثواب فإذا قرأت كان لك بكل حرف حسنة والحسنة بعشرة هذه بركة هي بركة الأجر والثواب أم هي بركة الرزق والمعاش إذا كنت مع القرآن وعشت معه واهتديت به وصحبته في حياتك حلت البركة في رزقك وبيتك ومعاشك أم هي بركة البيت والزوجة والأولاد أم هي بركة الوقت والعمر والله كل ذلك داخلن فيه لأن الله لما وصف كتابه بأنه مبارك ما خصَّ منه باب دون باب \nبل جعل البركه مطلقة قال كتاب انزلناه إليك مبارك وهذا ذكر مبارك وهذا كتاب انزلناه مبارك لكن تأمل في كل موضع جاء التوجيه الإلهي كيف تنال البركه قال كتاب انزلناه إليك مبارك ليتدبروا اياته تريد البركة؟ تدبر وهذا كتاب انزلناه مبارك فاتبعوه واتقوا تريد البركه اتبع كتاب الله",
+      "reviewer": "project user",
+      "date": "2026-09-22",
+      "basis": "User listened, supplied corrections for clips 1–5, edited clips 6–9 directly, and described the overall transcription as almost correct and very good. These user-reviewed references retain user wording and are not independently certified verbatim.",
+      "uncertainty": [],
+      "review_path": "staging/review-transcripts/PnQdtdUYDOg.txt",
+      "raw_draft_path": "staging/draft-asr/PnQdtdUYDOg.txt"
+    }
+  }
+]

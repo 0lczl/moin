@@ -1,0 +1,14 @@
+# Dependencies for the current benchmark and recorded-media workflow.
+# Use Python 3.11 or 3.12 for the CPU ML stack. MLX packages require macOS.
+
+numpy>=1.26,<3
+certifi>=2024.2
+faster-whisper>=1.0
+transformers>=4.40
+torch>=2.2
+mlx>=0.20; platform_system == "Darwin"
+mlx-lm>=0.20; platform_system == "Darwin"
+google-auth[requests]>=2.28,<3
+yt-dlp>=2025.1.15
+rapidfuzz==3.14.6
+segno==1.6.6

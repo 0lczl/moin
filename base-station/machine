@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from moin_machine import main
+
+raise SystemExit(main())

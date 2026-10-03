@@ -1,0 +1,11 @@
+{
+  "version": "moin-asr-nine-v1",
+  "reference_status": "user-reviewed-working-reference",
+  "primary_normalization": "NFKC; remove Arabic combining vocalization/annotation code points U+0610-U+061A, U+064B-U+065F, U+0670, U+06D6-U+06ED (including Quranic annotation symbols in that range) and tatweel; punctuation to spaces; collapse whitespace; preserve lexical forms and repetitions",
+  "diagnostic_normalization": "primary normalization plus alef variants أ إ آ ٱ -> ا",
+  "aggregation": "micro error counts over scored reference units",
+  "primary_score_exclusions": {
+    "I0tWefiPh-0": "Reference ends with an untimed [غير واضح] faded span; exclude the complete clip until a shared audio/reference boundary is marked."
+  },
+  "limitations": "Nine clips from three speakers are reused development material. Results describe this sample only and require Arabic human review."
+}

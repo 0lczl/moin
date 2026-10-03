@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16311f">
+  <title>Moin — Design preview</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="sidebar-top">
+        <a class="logo-link" href="#upload" aria-label="Moin home">
+          <img src="../../brand/presentation/moin-logo.svg" alt="مُعين — Moin">
+        </a>
+        <span class="sidebar-rule" aria-hidden="true"></span>
+        <p class="sidebar-heading" data-i18n="navTitle">Explore Moin</p>
+        <nav class="primary-nav" aria-label="Main pages">
+          <button type="button" class="nav-item is-active" data-page="upload" aria-current="page">
+            <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+            <span data-i18n="navUpload">Upload & translate</span>
+            <span class="nav-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button type="button" class="nav-item" data-page="live">
+            <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3V9Z"/></svg></span>
+            <span data-i18n="navLive">Haramain live</span>
+            <span class="nav-arrow" aria-hidden="true">↗</span>
+          </button>
+        </nav>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="brand-detail" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        <p data-i18n="sidebarTagline">Understanding, shared.</p>
+        <small data-i18n="conceptLabel">Design concept · September 2026</small>
+      </div>
+    </aside>
+
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="breadcrumb"><span data-i18n="workspace">Moin workspace</span><span aria-hidden="true">/</span><strong id="breadcrumb-current">Upload & translate</strong></div>
+        <div class="topbar-actions"><span class="prototype-badge" data-i18n="visualPreview">Visual preview</span><div class="locale-switch" role="group" aria-label="Interface language"><button type="button" data-locale="en" aria-pressed="true">EN</button><button type="button" data-locale="ar" aria-pressed="false">عربي</button></div></div>
+      </header>
+
+      <main>
+        <section class="page is-visible" id="upload-page" aria-labelledby="upload-title">
+          <div class="page-intro">
+            <div class="intro-copy"><p class="intro-label" data-i18n="uploadLabel">A new way to listen</p><h1 id="upload-title" data-i18n="uploadTitle">Understand every word, in your language.</h1><p class="intro-description" data-i18n="uploadDescription">Bring an Arabic recording. Follow the original words, read the meaning in English or French, and listen when speech is available.</p></div>
+            <div class="language-flow" aria-label="Arabic to English and French"><span class="flow-source">العربية</span><span class="flow-line" aria-hidden="true"></span><span class="flow-target">English <b>·</b> Français</span></div>
+          </div>
+
+          <section class="upload-workspace" aria-labelledby="upload-heading">
+            <div class="section-title-row"><div><span class="section-overline" data-i18n="startHere">Start here</span><h2 id="upload-heading" data-i18n="uploadHeading">Add audio or video</h2></div><span class="supported-formats">MP3 · WAV · M4A · MP4 · MOV</span></div>
+            <label class="dropzone" id="dropzone" for="media-file"><input id="media-file" type="file" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.mov,.webm"><span class="drop-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 26V9m0 0-6 6m6-6 6 6M7 27v4a2 2 0 0 0 2 2h22a2 2 0 0 0 2-2v-4"/></svg></span><strong id="drop-title" data-i18n="dropTitle">Drop your recording here</strong><span data-i18n="dropHint">or click to choose a file from your device</span><em data-i18n="dropTypes">Audio and video files</em></label>
+            <div class="upload-actions"><p data-i18n="uploadPrivacy">Your recording stays on this page in the visual preview.</p><button type="button" class="button-primary" id="preview-process"><span data-i18n="processPreview">Preview processing</span><span aria-hidden="true">↗</span></button></div>
+          </section>
+
+          <section class="result-section" aria-labelledby="result-heading"><div class="section-title-row result-heading-row"><div><span class="section-overline" data-i18n="whatYouSee">What you will see</span><h2 id="result-heading" data-i18n="resultHeading">From speech to understanding</h2></div><button type="button" class="text-button" id="example-result" data-i18n="showExample">Show example result</button></div>
+            <div class="result-meta"><div class="file-icon" aria-hidden="true">▶</div><div><strong id="result-file-name" data-i18n="sampleFile">Sample teaching excerpt</strong><span data-i18n="sampleInfo">Illustrative result · 00:42</span></div><span class="ready-status" id="result-status"><span></span><span data-i18n="ready">Ready to explore</span></span></div>
+            <div class="processing-state" id="processing-state" hidden><div class="progress-track"><span></span></div><h3 data-i18n="processingTitle">Processing your recording</h3><p data-i18n="processingDescription">Preparing the Arabic transcript, English and French meaning, and available speech.</p><span class="processing-note" data-i18n="processingNote">Visual state only — no file is sent or analyzed.</span></div>
+            <div class="sample-result" id="sample-result"><div class="transcript-panel"><div class="panel-heading"><span class="lang-symbol">ع</span><div><strong data-i18n="originalArabic">Original Arabic</strong><small data-i18n="transcriptLabel">Transcript</small></div></div><p lang="ar" dir="rtl">تحدّث الشيخ اليوم عن أهمية الرحمة في التعامل مع الناس، وأن حسن الخلق يظهر في الأفعال قبل الأقوال.</p><div class="audio-line"><button type="button" class="sample-play" aria-label="Original audio preview">▷</button><div class="waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>0:00 / 0:42</span></div></div><div class="translation-panel"><div class="translation-block"><div class="translation-top"><span class="language-name"><span class="lang-symbol">EN</span><strong>English</strong></span><button type="button" class="listen-button" data-i18n="listenPreview">▷ Listen preview</button></div><p lang="en" dir="ltr">The speaker spoke today about the importance of mercy in how we treat people, and that good character is shown in actions before words.</p></div><div class="translation-block"><div class="translation-top"><span class="language-name"><span class="lang-symbol">FR</span><strong>Français</strong></span><button type="button" class="listen-button" data-i18n="listenPreview">▷ Listen preview</button></div><p lang="fr" dir="ltr">L’orateur a parlé aujourd’hui de l’importance de la miséricorde dans nos relations avec les autres, et du fait que le bon comportement se manifeste dans les actes avant les paroles.</p></div></div></div>
+            <p class="sample-disclaimer" data-i18n="sampleDisclaimer">Example content for the design preview. Translations and audio are not generated by this page.</p>
+          </section>
+        </section>
+
+        <section class="page" id="live-page" aria-labelledby="live-title" hidden>
+          <div class="page-intro live-intro"><div class="intro-copy"><p class="intro-label" data-i18n="liveLabel">Lessons from the two holy cities</p><h1 id="live-title" data-i18n="liveTitle">Choose a teacher. Watch the original lesson.</h1><p class="intro-description" data-i18n="liveDescription">Explore lessons from Makkah and Madinah, then watch the original Arabic video from YouTube.</p></div><span class="live-symbol" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="section-title-row city-heading"><div><span class="section-overline" data-i18n="chooseLocation">From Makkah and Madinah</span><h2 data-i18n="cityHeading">Choose a city</h2></div><span class="city-heading-note" data-i18n="streamPreviewNote">Two lessons from YouTube</span></div>
+          <div class="city-grid" role="group" aria-label="Choose city"><button type="button" class="city-card is-selected" data-city="makkah" aria-pressed="true"><span class="city-card-top"><span class="city-index">01</span><span class="city-choice" data-i18n="exploreStreams">Explore streams ↗</span></span><span class="city-art city-art-makkah" aria-hidden="true">مكة</span><span class="city-card-bottom"><strong data-i18n="makkah">Makkah</strong><small data-i18n="makkahSub">Al Masjid Al Haram</small></span></button><button type="button" class="city-card" data-city="madinah" aria-pressed="false"><span class="city-card-top"><span class="city-index">02</span><span class="city-choice" data-i18n="exploreStreams">Explore streams ↗</span></span><span class="city-art city-art-madinah" aria-hidden="true">المدينة</span><span class="city-card-bottom"><strong data-i18n="madinah">Madinah</strong><small data-i18n="madinahSub">Al Masjid An Nabawi</small></span></button></div>
+          <section class="teacher-section" aria-labelledby="teachers-heading">
+            <div class="section-title-row"><div><span class="section-overline" data-i18n="teachersLabel">Watch a lesson</span><h2 id="teachers-heading" data-i18n="teachersHeading">Choose a teacher</h2></div><span class="stream-count" data-i18n="twoTeachers">Two teachers</span></div>
+            <div class="teacher-grid" id="teacher-grid" role="group" aria-label="Teachers"></div>
+          </section>
+          <section class="watch-section" id="lesson-section" aria-labelledby="watch-heading">
+            <div class="section-title-row"><div><span class="section-overline" data-i18n="lessonLabel">Selected teacher</span><h2 id="watch-heading"></h2></div><span class="on-youtube" data-i18n="oneLesson">One lesson available</span></div>
+            <button type="button" class="lesson-row" id="lesson-row"><span class="lesson-row-thumb"><img id="lesson-thumb" alt=""></span><span class="lesson-row-copy"><strong id="lesson-title"></strong><small id="lesson-source"></small></span><span class="lesson-row-action" data-i18n="watchLesson">Watch lesson ↗</span></button>
+            <div class="watch-layout"><div class="video-stage"><button type="button" class="video-cover" id="video-cover"><img id="video-cover-image" alt=""><span class="video-cover-tint" aria-hidden="true"></span><span class="video-cover-play" aria-hidden="true">▶</span><span class="video-cover-label" data-i18n="playOriginal">Play the Arabic lesson</span></button><iframe id="lesson-video" title="YouTube lesson" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen hidden></iframe></div><div class="audio-choice"><span class="section-overline" data-i18n="yourAudio">Lesson audio</span><h3 data-i18n="chooseLanguage">Listen in Arabic</h3><p data-i18n="audioDescription">The original Arabic plays in the YouTube video. Translated audio is coming later.</p><div class="audio-options"><div class="audio-option is-selected"><span class="audio-radio"></span><span><strong data-i18n="arabicAudio">Original Arabic</strong><small data-i18n="sourceAudio">Available in the video</small></span></div><div class="audio-option is-unavailable"><span class="audio-radio"></span><span><strong>English</strong><small data-i18n="comingLater">Coming later</small></span></div><div class="audio-option is-unavailable"><span class="audio-radio"></span><span><strong>Français</strong><small data-i18n="comingLater">Coming later</small></span></div></div><a id="youtube-link" class="youtube-link" href="#" target="_blank" rel="noopener noreferrer" data-i18n="openYoutube">Open on YouTube ↗</a></div></div>
+            <p class="sample-disclaimer" data-i18n="liveDisclaimer">These are real YouTube videos. Translated audio is not available in this preview.</p>
+          </section>
+        </section>
+      </main>
+      <footer><span>مُعين <span class="footer-divider">/</span> <span data-i18n="footerLine">Meaning, made accessible.</span></span><span data-i18n="footerPreview">Design preview only</span></footer>
+    </div>
+  </div>
+</body>
+</html>

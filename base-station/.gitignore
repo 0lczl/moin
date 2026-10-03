@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+# Model artifacts and audio assets are downloaded/recorded, not committed.
+voices/
+clips/
+*.wav
+
+# Latency measurement runs (generated, never committed).
+*.jsonl
+translation-benchmark-runs/

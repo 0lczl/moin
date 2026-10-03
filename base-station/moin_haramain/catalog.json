@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-03",
+  "mosques": [
+    {"id": "makkah", "name": {"en": "The Grand Mosque", "ar": "المسجد الحرام"}, "city": {"en": "Makkah", "ar": "مكة المكرمة"}},
+    {"id": "madinah", "name": {"en": "The Prophet's Mosque", "ar": "المسجد النبوي"}, "city": {"en": "Madinah", "ar": "المدينة المنورة"}}
+  ],
+  "imams": [
+    {"id": "shuwaier", "mosque_id": "makkah", "name": {"en": "Sheikh Abdulsalam Al-Shuwaier", "ar": "الشيخ عبدالسلام الشويعر"}},
+    {"id": "bukhari", "mosque_id": "makkah", "name": {"en": "Sheikh Hassan Bukhari", "ar": "الشيخ حسن بخاري"}},
+    {"id": "sudais", "mosque_id": "makkah", "name": {"en": "Sheikh Abdulrahman Al-Sudais", "ar": "الشيخ عبدالرحمن السديس"}},
+    {"id": "badr", "mosque_id": "madinah", "name": {"en": "Sheikh Abdulrazzaq Al-Badr", "ar": "الشيخ عبدالرزاق البدر"}},
+    {"id": "usaimi", "mosque_id": "madinah", "name": {"en": "Sheikh Saleh Al-Usaimi", "ar": "الشيخ صالح العصيمي"}},
+    {"id": "falata", "mosque_id": "madinah", "name": {"en": "Sheikh Omar Falata", "ar": "الشيخ عمر فلاتة"}}
+  ],
+  "sources": [
+    {"id": "haram-lessons", "mosque_id": "makkah", "name": {"en": "Lectures from Al-Masjid Al-Haram", "ar": "دروس المسجد الحرام"}, "channel_id": "UC3QAoXf9GN9xeQYhk-AZbTg", "url": "https://www.youtube.com/channel/UC3QAoXf9GN9xeQYhk-AZbTg", "verified_at": "2026-10-03"},
+    {"id": "imam-affairs", "mosque_id": "makkah", "name": {"en": "Imams and Muezzins Affairs", "ar": "شؤون الأئمة والمؤذنين"}, "channel_id": "UC-G8RL7iYJt5L_-7F5bRKLA", "url": "https://www.youtube.com/channel/UC-G8RL7iYJt5L_-7F5bRKLA", "verified_at": "2026-10-03"},
+    {"id": "nabawi-lessons", "mosque_id": "madinah", "name": {"en": "Lessons from the Prophet's Mosque", "ar": "دروس المسجد النبوي"}, "channel_id": "UC0XNCc-DU8J5_ksR-eufPaw", "url": "https://www.youtube.com/channel/UC0XNCc-DU8J5_ksR-eufPaw", "verified_at": "2026-10-03"}
+  ],
+  "videos": [
+    {"id": "wd0y0jXgz9M", "mosque_id": "makkah", "imam_id": "shuwaier", "source_id": "haram-lessons", "title": {"en": "What is recommended when reciting Al-Fatihah in prayer?", "ar": "ما الذي يستحب عند قراءة الفاتحة في الصلاة؟"}, "url": "https://www.youtube.com/watch?v=wd0y0jXgz9M", "kind": "recorded", "state": "available", "duration_seconds": 212},
+    {"id": "D3ofKhOUnXI", "mosque_id": "makkah", "imam_id": "bukhari", "source_id": "haram-lessons", "title": {"en": "The greatest trade with God", "ar": "أعظم تجارة مع الله"}, "url": "https://www.youtube.com/watch?v=D3ofKhOUnXI", "kind": "recorded", "state": "available", "duration_seconds": 43},
+    {"id": "uSGEpd6lzL8", "mosque_id": "makkah", "imam_id": "sudais", "source_id": "imam-affairs", "title": {"en": "A reflection from lessons at the Grand Mosque", "ar": "قبس من دروس المسجد الحرام"}, "url": "https://www.youtube.com/watch?v=uSGEpd6lzL8", "kind": "recorded", "state": "available", "duration_seconds": 80},
+    {"id": "yQKLfTSoWHg", "mosque_id": "madinah", "imam_id": "badr", "source_id": "nabawi-lessons", "title": {"en": "The Qur'an is guidance for all people", "ar": "القرآن هدىً للناس وهدىً للمتقين"}, "url": "https://www.youtube.com/watch?v=yQKLfTSoWHg", "kind": "recorded", "state": "available", "duration_seconds": 138},
+    {"id": "cxNWKcP1Cnc", "mosque_id": "madinah", "imam_id": "usaimi", "source_id": "nabawi-lessons", "title": {"en": "Enjoining right and forbidding wrong", "ar": "الأمر بالمعروف والنهي عن المنكر"}, "url": "https://www.youtube.com/watch?v=cxNWKcP1Cnc", "kind": "recorded", "state": "available", "duration_seconds": 122},
+    {"id": "wqCMcNwx5F8", "mosque_id": "madinah", "imam_id": "falata", "source_id": "nabawi-lessons", "title": {"en": "The Prophet's love for Aisha", "ar": "من محبة النبي ﷺ لأم المؤمنين عائشة"}, "url": "https://www.youtube.com/watch?v=wqCMcNwx5F8", "kind": "recorded", "state": "available", "duration_seconds": 96}
+  ],
+  "broadcasts": [
+    {"mosque_id": "makkah", "state": "unavailable", "source_id": "haram-lessons", "url": null, "verified_at": null},
+    {"mosque_id": "madinah", "state": "unavailable", "source_id": "nabawi-lessons", "url": null, "verified_at": null}
+  ]
+}
