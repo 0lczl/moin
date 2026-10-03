@@ -46,6 +46,9 @@ The [Haramain Video Center](base-station/HARAMAIN-CENTER.md) is available at
 The hosted pilot's [deployment runbook](deploy/README.md) explains the
 explicit release bundle, HTTPS proxy, provider secrets, spending safeguards,
 and remaining on-host verification. The public site is not live yet.
+For a supervised hackathon demonstration without a rented server, see the
+[temporary Mac and Cloudflare Tunnel guide](deploy/free-demo.md). The judge link
+works only while the operator's Mac and tunnel are running.
 
 See [the architecture note](docs/architecture.md) for the current local system,
 its performance boundaries, and a staged path toward a hosted website.
