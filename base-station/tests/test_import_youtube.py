@@ -118,3 +118,16 @@ def test_duration_limit_rejects_a_long_recording_before_download(monkeypatch, tm
     with pytest.raises(ValueError, match="no longer than 5 minutes"):
         import_youtube.import_video("https://youtu.be/dQw4w9WgXcQ", tmp_path / "long", yt_dlp=downloader, max_duration_seconds=300)
     assert len(calls) == 0
+
+
+@pytest.mark.parametrize("stderr, expected", [
+    ("No supported JavaScript runtime could be found", "youtube_js_unavailable"),
+    ("Sign in to confirm you're not a bot", "youtube_access_blocked"),
+    ("HTTP Error 403: Forbidden", "youtube_access_blocked"),
+    ("Requested format is not available", "youtube_audio_unavailable"),
+])
+def test_import_failures_have_safe_diagnostic_codes(stderr, expected):
+    error = subprocess.CalledProcessError(
+        1, ["yt-dlp", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"], stderr=stderr,
+    )
+    assert import_youtube.import_failure_code(error) == expected

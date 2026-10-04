@@ -92,6 +92,29 @@ def _run(command: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command, check=True, capture_output=True, text=True, timeout=timeout)
 
 
+def import_failure_code(error: Exception) -> str:
+    """Return a safe, bounded category without exposing extractor output or URLs."""
+    if isinstance(error, subprocess.TimeoutExpired):
+        return "youtube_import_timeout"
+    if isinstance(error, subprocess.CalledProcessError):
+        detail = (error.stderr or "").lower()
+        if "no supported javascript runtime" in detail or "yt-dlp-ejs" in detail:
+            return "youtube_js_unavailable"
+        if "sign in to confirm" in detail or "not a bot" in detail or "http error 403" in detail:
+            return "youtube_access_blocked"
+        if "requested format is not available" in detail or "no video formats found" in detail:
+            return "youtube_audio_unavailable"
+        command = error.cmd if isinstance(error.cmd, (list, tuple)) else [error.cmd]
+        if command and Path(str(command[0])).name == "ffmpeg":
+            return "audio_decode_failed"
+        return "youtube_extraction_failed"
+    if isinstance(error, (FileNotFoundError, PermissionError)):
+        return "import_dependency_unavailable"
+    if isinstance(error, ValueError):
+        return "youtube_metadata_invalid"
+    return "youtube_import_failed"
+
+
 def import_video(url: str, out: Path, *, yt_dlp: Path | None = None, max_duration_seconds: int | None = None) -> Path:
     canonical, expected_id = canonical_url(url)
     out = Path(out)

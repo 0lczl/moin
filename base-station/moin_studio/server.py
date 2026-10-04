@@ -18,7 +18,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote, urlsplit
 
-from tools.import_youtube import canonical_url, import_video
+from tools.import_youtube import canonical_url, import_failure_code, import_video
 from moin_machine.machine import MachineCancelled, run_machine
 from moin_haramain.catalog import DEFAULT_CATALOG, load_catalog
 from moin_studio.diagnostics import JobDiagnostics
@@ -68,7 +68,7 @@ def validate_public_configuration(storage: Path, *, environ=None):
     storage = Path(storage).resolve()
     if not storage.is_absolute() or storage == Path(ledger).resolve():
         raise ValueError('Use separate storage and budget directories')
-    for command in ('ffmpeg', 'ffprobe', 'yt-dlp'):
+    for command in ('ffmpeg', 'ffprobe', 'yt-dlp', 'deno'):
         bundled = Path(sys.executable).with_name(command)
         if shutil.which(command) is None and not bundled.is_file():
             raise ValueError(f'{command} is required for public mode')
@@ -416,16 +416,21 @@ class Studio:
                     shutil.rmtree(folder / 'output', ignore_errors=True)
                 except SourceMismatch as error:
                     diagnostics.record('job_failed', failure_code='source_mismatch',
-                                        error_type=type(error).__name__, stage=diagnostics.stage_name)
+                                        error_type=type(error).__name__, stage=diagnostics.failed_stage)
                     self.update(jid, state='failed', finished=time.time(),
+                                failure_code='source_mismatch',
                                 message='The recording did not match its approved institutional channel. Check the official source link.')
                 except Exception as error:
-                    diagnostics.record('job_failed', failure_code='processing_error',
-                                        error_type=type(error).__name__, stage=diagnostics.stage_name)
+                    failure_code = (import_failure_code(error) if diagnostics.failed_stage == 'youtube_import'
+                                    else 'processing_error')
+                    diagnostics.record('job_failed', failure_code=failure_code,
+                                        error_type=type(error).__name__, stage=diagnostics.failed_stage)
                     with self.lock:
                         self.processes.pop(jid, None)
                         if job['state'] != 'cancelled':
-                            self.update(jid, state='failed', finished=time.time(), message='This recording could not be processed. Try another file or check the studio terminal.')
+                            self.update(jid, state='failed', finished=time.time(),
+                                        failure_code=failure_code,
+                                        message='This recording could not be processed. Try another file or check the studio terminal.')
 
     @staticmethod
     def make_playback(folder, result):

@@ -19,6 +19,7 @@ class JobDiagnostics:
     def __init__(self, path: Path):
         self.path = path
         self.stage_name: str | None = None
+        self.failed_stage: str | None = None
 
     def record(self, event: str, **fields: object) -> None:
         row = {
@@ -43,6 +44,7 @@ class JobDiagnostics:
         try:
             yield
         except Exception as error:
+            self.failed_stage = name
             self.record('stage_failed', stage=name,
                         duration_ms=round((time.perf_counter() - started) * 1000, 3),
                         error_type=type(error).__name__)
