@@ -50,7 +50,7 @@ PUBLIC_RETENTION_SECONDS = 7 * 24 * 3600
 def validate_public_configuration(storage: Path, *, environ=None):
     """Fail closed before accepting anonymous requests on a hosted worker."""
     values = os.environ if environ is None else environ
-    origin = values.get('MOIN_PUBLIC_BASE_URL', '').rstrip('/')
+    origin = (values.get('MOIN_PUBLIC_BASE_URL') or values.get('RENDER_EXTERNAL_URL') or '').rstrip('/')
     parsed = urlsplit(origin)
     if (parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password
             or parsed.path or parsed.query or parsed.fragment):
@@ -64,10 +64,10 @@ def validate_public_configuration(storage: Path, *, environ=None):
         raise ValueError('Public mode requires MOIN_ASR_PROVIDER=groq and MOIN_LIVE_ASR=groq')
     ledger = values.get('MOIN_USAGE_LEDGER_DIR', '')
     if not ledger or not Path(ledger).is_absolute():
-        raise ValueError('MOIN_USAGE_LEDGER_DIR must be an absolute persistent directory')
+        raise ValueError('MOIN_USAGE_LEDGER_DIR must be an absolute directory')
     storage = Path(storage).resolve()
     if not storage.is_absolute() or storage == Path(ledger).resolve():
-        raise ValueError('Use separate persistent storage and budget directories')
+        raise ValueError('Use separate storage and budget directories')
     for command in ('ffmpeg', 'ffprobe', 'yt-dlp'):
         bundled = Path(sys.executable).with_name(command)
         if shutil.which(command) is None and not bundled.is_file():
@@ -101,7 +101,9 @@ class Studio:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.public_mode = public_mode
-        self.public_base_url = os.environ.get('MOIN_PUBLIC_BASE_URL', '').rstrip('/') if public_mode else ''
+        self.public_base_url = (os.environ.get('MOIN_PUBLIC_BASE_URL') or
+                                os.environ.get('RENDER_EXTERNAL_URL') or '').rstrip('/') if public_mode else ''
+        self.ephemeral_demo = public_mode and os.environ.get('MOIN_EPHEMERAL_DEMO') == '1'
         if public_mode:
             public_url = urlsplit(self.public_base_url)
             if public_url.scheme != 'https' or not public_url.netloc or public_url.path or public_url.query:
@@ -591,8 +593,10 @@ class Handler(BaseHTTPRequestHandler):
                 remaining -= len(data)
 
     def do_GET(self):
-        if not self.valid_host(): return self.send_json({'error':'Invalid host'},403)
         path = urlsplit(self.path).path
+        if path == '/healthz':
+            return self.send_json({'status':'ok'})
+        if not self.valid_host(): return self.send_json({'error':'Invalid host'},403)
         app = self.server.app
         try:
             match = re.fullmatch(rf'/api/live/rooms/({LIVE_ID})', path)
@@ -644,6 +648,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json({'token': 'public-session' if app.public_mode else app.token,
                                        'jobs':app.list_jobs(token), 'maxBytes':app.upload_limit,
                                        'public':app.public_mode,
+                                       'ephemeral':app.ephemeral_demo,
                                        'demo':(app.output('demo')/'result.json').exists()}, cookie=cookie)
             if path == '/api/haramain/catalog':
                 try:

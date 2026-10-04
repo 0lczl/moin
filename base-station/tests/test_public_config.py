@@ -48,3 +48,19 @@ def test_valid_public_configuration_checks_runtime_assets(tmp_path, monkeypatch,
     monkeypatch.setattr('moin_studio.server.shutil.which', lambda name: '/usr/bin/' + name)
     assert validate_public_configuration(tmp_path / 'storage', environ=configured(tmp_path)) == 'https://moin.example'
     assert (tmp_path / 'ledger').is_dir()
+
+
+def test_render_default_url_can_supply_public_origin(tmp_path, monkeypatch, sample_renderings_path):
+    fixture_base = tmp_path / 'base'
+    config_dir = fixture_base / 'benchmark-data'
+    renderings_dir = config_dir / 'staging-renderings'
+    renderings_dir.mkdir(parents=True)
+    source_config = Path(__file__).resolve().parents[1] / 'benchmark-data/local-comparison.json'
+    shutil.copyfile(source_config, config_dir / 'local-comparison.json')
+    shutil.copyfile(sample_renderings_path, renderings_dir / 'renderings.quranenc.json')
+    monkeypatch.setattr('moin_studio.server.BASE', fixture_base)
+    monkeypatch.setattr('moin_studio.server.shutil.which', lambda name: '/usr/bin/' + name)
+    options = configured(tmp_path)
+    del options['MOIN_PUBLIC_BASE_URL']
+    options['RENDER_EXTERNAL_URL'] = 'https://moin-judges-demo.onrender.com'
+    assert validate_public_configuration(tmp_path / 'storage', environ=options) == options['RENDER_EXTERNAL_URL']

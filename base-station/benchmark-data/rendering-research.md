@@ -90,6 +90,12 @@ comparison. If an edition changes, create a new composition and re-evaluate it;
 do not silently alter frozen evidence. A public product needs to honor the
 publisher's update conditions. No publication was performed in this session.
 
+For the later disposable Render judging build, the frozen registry is bundled
+in the public repository with source attribution and its exact edition versions;
+see `QURANENC_NOTICE.md` at the repository root. This packaging does not add an
+independent scholarly verification claim. Recheck the publisher's edition
+metadata before promoting this build to a longer-lived public service.
+
 ## Other sources assessed
 
 ### al-quran.fr Tadabbur-OS essential corpus v2026-08-13

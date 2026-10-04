@@ -23,12 +23,12 @@ identity. DigitalOcean's bundled 4 GiB size and pricing are documented at
 https://www.digitalocean.com/pricing/droplets and the temporary DNS scheme at
 https://sslip.io/ .
 
-Render Free is suitable for a disposable interface preview only. It sleeps
-after 15 idle minutes and its filesystem is erased on sleep/restart/redeploy;
-it cannot attach a persistent disk. That conflicts with Moin's seven-day
-recording retention, private browser-owned results, live-room state, and durable
-spend ledger. Running the current full app there would silently lose user data.
-See https://render.com/docs/free .
+For a zero-cost, disposable judging test, use [`render-free.md`](render-free.md).
+Render Free sleeps after 15 idle minutes and erases its local filesystem on
+sleep/restart/redeploy; it cannot attach a persistent disk. That variant shows
+the reset behavior to users and does not claim seven-day retention, durable
+live-room state, or a durable in-app spend ledger. Use provider-side quota
+controls before exposing it. See https://render.com/docs/free .
 
 ## Build a release from the current Mac workspace
 

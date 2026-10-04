@@ -73,3 +73,31 @@ def test_public_upload_requires_initialized_session_and_same_origin(public_serve
     status, _, _ = request(public_server, 'POST', '/api/upload', body=b'a',
                            cookie=cookie, origin='https://foreign.example')
     assert status == 403
+
+
+def test_render_demo_exposes_ephemeral_state_and_health(tmp_path, monkeypatch):
+    monkeypatch.delenv('MOIN_PUBLIC_BASE_URL', raising=False)
+    monkeypatch.setenv('RENDER_EXTERNAL_URL', 'https://moin-judges-demo.onrender.com')
+    monkeypatch.setenv('MOIN_EPHEMERAL_DEMO', '1')
+    app = Studio(tmp_path, public_mode=True)
+    server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+    server.app = app
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        connection = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+        connection.request('GET', '/healthz', headers={'Host': 'internal-health-check'})
+        response = connection.getresponse()
+        assert response.status == 200
+        assert json.loads(response.read()) == {'status': 'ok'}
+        connection.close()
+
+        connection = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+        connection.request('GET', '/api/state', headers={'Host': 'moin-judges-demo.onrender.com'})
+        response = connection.getresponse()
+        assert response.status == 200
+        assert json.loads(response.read())['ephemeral'] is True
+        connection.close()
+    finally:
+        server.shutdown()
+        server.server_close()

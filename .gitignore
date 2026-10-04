@@ -46,7 +46,9 @@ base-station/clips/
 # Private benchmark results, blind mappings, and source media
 base-station/benchmark-runs/
 base-station/benchmark-data/staging/
-base-station/benchmark-data/staging-renderings/
+base-station/benchmark-data/staging-renderings/*
+# The source-selected, attributed QuranEnc registry is the only published rendering asset.
+!base-station/benchmark-data/staging-renderings/renderings.quranenc.json
 
 # Local machine demonstrations and blind review exports
 base-station/machine-runs/

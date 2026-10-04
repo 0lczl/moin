@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: moin-judges-0lczl
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.hosted
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: "8787"
+      - key: MOIN_EPHEMERAL_DEMO
+        value: "1"
+      - key: MOIN_ASR_PROVIDER
+        value: groq
+      - key: MOIN_LIVE_ASR
+        value: groq
+      - key: MOIN_USAGE_LEDGER_DIR
+        value: /data/ledger
+      - key: GROQ_API_KEY
+        sync: false
+      - key: DEEPL_AUTH_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
