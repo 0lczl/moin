@@ -49,6 +49,7 @@ def test_uploads_wav_to_exact_large_v3_and_parses_safe_metrics(tmp_path, monkeyp
     body = request.data
     assert request.full_url == "https://api.groq.com/openai/v1/audio/transcriptions"
     assert request.get_header("Authorization") == "Bearer test-key-never-logged"
+    assert request.get_header("User-agent").startswith("Moin/1.0")
     assert captured["timeout"] == 7.0
     assert b'name="model"\r\n\r\nwhisper-large-v3\r\n' in body
     assert b"whisper-large-v3-turbo" not in body
@@ -86,6 +87,23 @@ def test_http_error_does_not_leak_provider_body_key_or_audio(tmp_path, monkeypat
     assert exc.value.code == "credential_rejected"
     assert key not in str(exc.value)
     assert "source-audio" not in str(exc.value)
+
+
+@pytest.mark.parametrize(('body', 'expected_code'), [
+    (b'error code: 1010\n', 'network_blocked'),
+    (b'{"error":{"code":"model_permission_blocked_project"}}', 'access_denied'),
+])
+def test_forbidden_response_is_not_misreported_as_bad_key(tmp_path, monkeypatch, body, expected_code):
+    audio_path = tmp_path / 'segment.wav'
+    audio_path.write_bytes(wav_bytes())
+    monkeypatch.setenv('GROQ_API_KEY', 'test-key')
+
+    def opener(*_args, **_kwargs):
+        raise HTTPError(groq_asr.API_URL, 403, 'forbidden', {}, io.BytesIO(body))
+
+    with pytest.raises(groq_asr.GroqASRError) as exc:
+        groq_asr.transcribe(audio_path, opener=opener)
+    assert exc.value.code == expected_code
 
 
 def test_rejects_non_wav_empty_and_oversized_before_api(tmp_path, monkeypatch):

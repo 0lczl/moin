@@ -154,6 +154,7 @@ def transcribe(
             "Authorization": f"Bearer {key}",
             "Content-Type": f"multipart/form-data; boundary={boundary}",
             "Accept": "application/json",
+            "User-Agent": "Moin/1.0 (+https://github.com/0lczl/moin)",
         },
         method="POST",
     )
@@ -163,8 +164,12 @@ def transcribe(
         with open_url(request, timeout=float(timeout_seconds)) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
-        if error.code in (401, 403):
+        if error.code == 401:
             raise GroqASRError("credential_rejected", "Groq did not accept the API key.") from None
+        if error.code == 403:
+            if error.read(128).startswith(b"error code: 1010"):
+                raise GroqASRError("network_blocked", "Cloudflare blocked the request to Groq.") from None
+            raise GroqASRError("access_denied", "Groq denied access to this ASR model or project.") from None
         if error.code == 413:
             raise GroqASRError("audio_too_large", "Groq rejected the WAV upload size.") from None
         if error.code == 429:

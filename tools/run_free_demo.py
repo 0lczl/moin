@@ -44,13 +44,18 @@ KEYS = (
 
 def provider_environment() -> dict[str, str]:
     env = os.environ.copy()
-    for name, label in KEYS:
+    def read_key(name: str, label: str) -> None:
         if not env.get(name, "").strip():
             if not sys.stdin.isatty():
                 raise RuntimeError(f"{label} requires an interactive Terminal")
             env[name] = getpass.getpass(f"Paste {label} (input hidden): ").strip()
         if not env[name]:
             raise RuntimeError(f"{label} cannot be empty")
+
+    read_key(*KEYS[0])
+    check_groq_credentials(env)
+    for name, label in KEYS[1:]:
+        read_key(name, label)
     env.update({
         "MOIN_ASR_PROVIDER": "groq",
         "MOIN_LIVE_ASR": "groq",
@@ -76,7 +81,6 @@ def check_local_requirements(env: dict[str, str]) -> None:
     )
     if result.returncode:
         raise RuntimeError("Moin public preflight failed:\n" + result.stderr.strip())
-    check_groq_credentials(env)
 
 
 def check_groq_credentials(env: dict[str, str], opener=urlopen) -> None:
@@ -87,7 +91,11 @@ def check_groq_credentials(env: dict[str, str], opener=urlopen) -> None:
     """
     request = Request(
         "https://api.groq.com/openai/v1/models/whisper-large-v3",
-        headers={"Authorization": f"Bearer {env['GROQ_API_KEY']}"},
+        headers={
+            "Authorization": f"Bearer {env['GROQ_API_KEY']}",
+            "Accept": "application/json",
+            "User-Agent": "Moin/1.0 (+https://github.com/0lczl/moin)",
+        },
     )
     context = ssl.create_default_context(cafile=certifi.where())
     try:
@@ -95,11 +103,19 @@ def check_groq_credentials(env: dict[str, str], opener=urlopen) -> None:
             if response.status != 200:
                 raise RuntimeError("Groq could not confirm Whisper large-v3 availability.")
     except HTTPError as error:
-        if error.code in (401, 403):
+        if error.code == 401:
             raise RuntimeError(
-                "Groq rejected the API key. Stop this run and restart with a fresh "
-                "Groq key from console.groq.com/keys. If GROQ_API_KEY is set in "
-                "your shell, unset it first so the launcher prompts again."
+                "Groq returned HTTP 401: this API key is invalid or was copied incorrectly. "
+                "If GROQ_API_KEY is set in your shell, unset it before retrying."
+            ) from None
+        if error.code == 403:
+            if error.read(128).startswith(b"error code: 1010"):
+                raise RuntimeError(
+                    "Cloudflare blocked the request to Groq (error 1010), before key validation. "
+                    "Try a different network or contact Groq support."
+                ) from None
+            raise RuntimeError(
+                "Groq returned HTTP 403: check this project's Whisper large-v3 model permissions."
             ) from None
         raise RuntimeError(f"Groq model check failed (HTTP {error.code}). Retry shortly.") from None
     except (URLError, TimeoutError, OSError):

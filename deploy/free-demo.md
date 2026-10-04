@@ -34,12 +34,13 @@ they are already in that terminal's environment. It does not save the keys or
 put them on the command line, in Git, or in the browser. Enter them again after
 a restart. Never send keys in chat or screenshots.
 
-The command checks the required tools, curated Qur'an rendering registry, and
-public configuration before opening a tunnel. It also checks that Groq accepts
-the key and exposes the chosen Whisper large-v3 model without submitting audio.
-If Groq rejects the key, create a fresh key in the Groq Console, stop the
-current demo, run `unset GROQ_API_KEY` if your shell has an old key, and restart
-the launcher. It waits until the Studio,
+The command checks Groq first, before asking for DeepL and ElevenLabs keys. It
+then checks the required tools, curated Qur'an rendering registry, and public
+configuration before opening a tunnel. The Groq model lookup submits no audio.
+HTTP 401 means the key was rejected; HTTP 403 can mean model permission is
+blocked. A Cloudflare 1010 response is a request/network block, not a bad key.
+If an old key is exported in the shell, run `unset GROQ_API_KEY` and restart.
+The launcher waits until the Studio,
 Haramain, and Live pages respond through the public URL, then opens the browser
 and prints the link for the judges. Press Ctrl+C to stop both processes. The
 temporary URL stops working and must not be submitted as a permanent link.
