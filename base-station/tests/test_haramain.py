@@ -15,6 +15,7 @@ def test_seed_is_official_and_six_clips_are_within_import_limit():
     catalog = load_catalog()
     assert len(catalog['imams']) == 6
     assert {v['imam_id'] for v in catalog['videos']} == {i['id'] for i in catalog['imams']}
+    assert all(i['portrait'] == f'/haramain/portraits/{i["id"]}.jpg' for i in catalog['imams'])
     assert all(v['duration_seconds'] <= studio_server.YOUTUBE_MAX_SECONDS for v in catalog['videos'])
 
 
@@ -25,6 +26,7 @@ def test_seed_is_official_and_six_clips_are_within_import_limit():
     lambda c: c['sources'][0].update(channel_id='UCunknown'),
     lambda c: c['sources'][0].update(url='https://example.com/channel'),
     lambda c: c['videos'][0].update(title={'en': 'Missing Arabic'}),
+    lambda c: c['imams'][0].update(portrait='/haramain/portraits/../other.jpg'),
     lambda c: c['broadcasts'][0].update(state='available', url='https://example.com/live'),
 ])
 def test_reject_untrusted_duplicate_or_incomplete_catalog(mutation):
@@ -72,6 +74,9 @@ def test_catalog_route_deduplicates_jobs_and_reuses_result(monkeypatch, haramain
     assert call(haramain_service, 'GET', '/haramain')[0] == 200
     assert call(haramain_service, 'GET', '/haramain/makkah')[0] == 200
     assert call(haramain_service, 'GET', f'/haramain/video/{video["id"]}')[0] == 200
+    for imam in load_catalog()['imams']:
+        status, portrait = call(haramain_service, 'GET', imam['portrait'])
+        assert status == 200 and portrait.startswith(b'\xff\xd8')
     status, payload = call(haramain_service, 'GET', '/api/haramain/catalog')
     assert status == 200 and len(json.loads(payload)['videos']) == 6
     status, payload = call(haramain_service, 'GET', f'/api/haramain/videos/{video["id"]}')

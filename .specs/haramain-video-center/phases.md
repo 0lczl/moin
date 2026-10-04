@@ -9,6 +9,7 @@
 - **Results**: Reuse stored processing results associated with the video identifier and pipeline version.
 - **Service boundary**: ASR, translation, and speech synthesis run on the server; provider keys remain secret.
 - **Broadcasts**: A live broadcast is presented as official content; it does not mean real-time translation is enabled.
+- **Portraits**: The six featured imams have verified, locally served photos paired with their names; asset order alone is not proof of identity. This enhancement is also included in the later frontend design plan.
 
 ---
 
@@ -91,12 +92,12 @@ Add a distinct live-broadcast area to each mosque page. It presents an available
 
 ## Phase 4: Content Management and Demo Readiness
 
-**User stories**: #3, #5, #9, #10, #11
+**User stories**: #3, #5, #9, #10, #11, #12
 **Depends on**: Phase 2, Phase 3
 
 ### What to build
 
-Complete the presentation experience with managed catalog data and source states, accessibility and responsive improvements, clear messages, and a small stable set of official content for a judge demonstration.
+Complete the presentation experience with managed catalog data and source states, accessibility and responsive improvements, correctly identified portraits for the six featured imams, clear messages, and a small stable set of official content for a judge demonstration.
 
 ### Acceptance criteria
 
@@ -104,6 +105,7 @@ Complete the presentation experience with managed catalog data and source states
 - [ ] A non-official, duplicate, or incomplete source cannot appear in the center.
 - [ ] The interface handles an empty catalog, processing failure, and broadcast-source failure with useful messages.
 - [ ] The interface follows Moin identity and remains usable with keyboard and touch controls.
+- [ ] Each featured imam has a correctly matched portrait and visible bilingual name; image failure leaves a named, usable selection control.
 - [ ] A documented demo journey exists: choose mosque, open video, read Arabic, choose translation, and request speech.
 
 ### Manual QA plan
@@ -112,3 +114,4 @@ Complete the presentation experience with managed catalog data and source states
 2. **Empty catalog**: Open a mosque with no videos in the test environment. **Expected**: A useful empty state appears and navigation remains intact.
 3. **Accessibility**: Navigate from `/haramain` to the reader using only the keyboard. **Expected**: Focus is visible and filters, tabs, and listen controls are reachable.
 4. **Judge demo**: Complete the full journey on a phone and computer using a prepared official video. **Expected**: No route is broken; Arabic, translation, and optional speech are clear.
+5. **Verify portraits**: Open `/haramain/makkah` and `/haramain/madinah` and compare all six displayed portraits with confirmed identities and source records. **Expected**: Each portrait belongs to the named imam, displays without distortion on phone and computer, and has an accessible name; blocking one image leaves its named filter usable.

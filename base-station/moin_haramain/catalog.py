@@ -20,6 +20,8 @@ APPROVED_CHANNELS = {
     'nabawi-lessons': ('madinah', 'UC0XNCc-DU8J5_ksR-eufPaw'),
 }
 EXPECTED_MOSQUES = {'makkah', 'madinah'}
+PORTRAIT_DIR = Path(__file__).resolve().parents[1] / 'moin_studio' / 'static' / 'haramain' / 'portraits'
+FEATURED_IMAMS = {'badr', 'usaimi', 'falata', 'shuwaier', 'bukhari', 'sudais'}
 VIDEO_STATES = {'available', 'unavailable'}
 
 
@@ -62,12 +64,17 @@ def validate_catalog(data):
         _bilingual(mosque.get('city'), 'mosque.city')
 
     imams = _indexed(data.get('imams'), 'imams')
+    if set(imams) != FEATURED_IMAMS:
+        raise ValueError('first release requires the six featured imams')
     if any(sum(i.get('mosque_id') == mosque for i in imams.values()) != 3 for mosque in EXPECTED_MOSQUES):
         raise ValueError('first release requires three imams per mosque')
     for imam in imams.values():
         _bilingual(imam.get('name'), 'imam.name')
         if imam.get('mosque_id') not in mosques:
             raise ValueError('imam has unknown mosque')
+        portrait_name = f'{imam["id"]}.jpg'
+        if imam.get('portrait') != f'/haramain/portraits/{portrait_name}' or not (PORTRAIT_DIR / portrait_name).is_file():
+            raise ValueError(f'imam {imam["id"]} needs its approved local portrait')
 
     sources = _indexed(data.get('sources'), 'sources')
     for source in sources.values():

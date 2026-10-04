@@ -6,7 +6,7 @@ Moin users need a trusted way to find content from the Grand Mosque in Makkah an
 
 ## Solution
 
-Add a dedicated Haramain Video Center. A visitor starts by choosing the Grand Mosque or the Prophet’s Mosque. The first release presents three imams for each mosque, a distinct live-broadcast area when one is available, and a clear route to previous videos. The center uses only official sources curated by the Moin team, such as official YouTube channels and official Presidency pages that publish video.
+Add a dedicated Haramain Video Center. A visitor starts by choosing the Grand Mosque or the Prophet’s Mosque. The first release presents three imams for each mosque, each with a correctly identified portrait and visible name, a distinct live-broadcast area when one is available, and a clear route to previous videos. The center uses only official sources curated by the Moin team, such as official YouTube channels and official Presidency pages that publish video.
 
 Opening a recorded video takes the visitor to the Moin reader: original Arabic audio, Arabic transcript, English and French translations, and an optional button to listen to translated speech. The page states that more imams and sources will be added later, and it does not claim that Haramain broadcasts receive real-time translation in this release.
 
@@ -23,11 +23,13 @@ Opening a recorded video takes the visitor to the Moin reader: original Arabic a
 9. As a visitor, I want to see an understandable status while processing is in progress, fails, or a video is unavailable, so I know what to do next.
 10. As a visitor on a phone or computer, I want a clear Arabic and English interface with correct Arabic directionality, so I can use the center comfortably.
 11. As the Moin team, I want the center to state that coverage will expand to additional imams and sources, so the first-release scope is honest and clear.
+12. As a visitor, I want to see the correct photo and name for each featured sheikh, so I can recognize and select him before browsing his videos.
 
 ## Acceptance Criteria
 
 - [ ] A dedicated center clearly presents the Grand Mosque and the Prophet’s Mosque.
 - [ ] The first-release catalog contains three defined imams for each mosque.
+- [ ] All six featured sheikhs have correctly identified, visible portraits paired with their Arabic/English names on the mosque pages. The portraits are accessible, responsive, and have named fallbacks if an image fails.
 - [ ] The catalog contains only official sources manually approved by the Moin team.
 - [ ] A live broadcast appears separately when available, with a clear state when no broadcast is available.
 - [ ] A visitor can browse previous videos and filter visible content by mosque and imam.
@@ -42,7 +44,8 @@ Opening a recorded video takes the visitor to the Moin reader: original Arabic a
 ### Architecture & Schema
 
 - The Moin team maintains a manually curated catalog of official sources. The first release does not use open YouTube search or unverified recommendations.
-- The catalog consists of mosques, imams, sources, and videos. Each video includes its mosque, imam when known, title, official URL, content type (`live` or `recorded`), availability state, publication or broadcast time when available, and a permitted thumbnail.
+- The catalog consists of mosques, imams, sources, and videos. Each imam has a stable identity, bilingual name, mosque association, and an approved portrait reference. Each video includes its mosque, imam when known, title, official URL, content type (`live` or `recorded`), availability state, publication or broadcast time when available, and a permitted thumbnail.
+- The six user-supplied images are locally served, web-optimized portrait assets. The owner confirmed each image-to-person match and affirmed public use in Moin on 2026-10-04; the original photographer and publication source were not independently verified.
 - A stored processing result is associated with the video identifier, the Moin pipeline version, and the language so that completed work can be reused.
 - Live broadcast is a discovery and viewing feature in this center. Real-time microphone-to-translation belongs to the Live Translator and remains separate.
 
@@ -57,6 +60,7 @@ Opening a recorded video takes the visitor to the Moin reader: original Arabic a
 ### Behavior & Interactions
 
 - The visitor chooses a mosque, then an imam, video, or available broadcast.
+- The mosque view presents each featured imam as a portrait-and-name choice. Filtering and selected state remain clear to keyboard and screen-reader users and when an image does not load.
 - An unprocessed video starts one processing job or joins an existing job for that video. A previously processed video shows its saved result immediately.
 - The reader starts with Arabic, then allows English or French selection.
 - The listen button appears for the chosen language only when audio is available or can be requested. Text remains available when speech cannot be generated.
@@ -69,6 +73,7 @@ Opening a recorded video takes the visitor to the Moin reader: original Arabic a
 - Interface tests cover available and unavailable broadcasts, empty or removed videos, and processing and failure states.
 - Integration tests use local substitutes for ASR, translation, and speech synthesis, followed by a manual check using a real official video in a configured environment.
 - Manual checks cover Arabic and English layouts, phone and computer use, original playback, and translated playback.
+- Manual checks also compare all six displayed portraits with verified names, image crops, alternate text, fallback states, and recorded public-use provenance.
 
 ## Out of Scope
 
@@ -79,10 +84,10 @@ Opening a recorded video takes the visitor to the Moin reader: original Arabic a
 
 ## Open Questions
 
-- The six imam names, ordering, and approved official source links will be finalized while populating the catalog before implementation.
+- Any additional official source links still require curation before they enter the catalog.
 - Retention time, storage limits, and cost limits for processed videos and speech files require an operational decision before launch.
 - The maximum video length shown to users requires a decision after performance measurement in the target environment.
 
 ## Further Notes
 
-The design follows the approved Moin presentation identity. Listening and understanding remain central, and Arabic text must remain readable right-to-left in both Arabic and English interfaces.
+The six featured sheikhs are Sheikh Abdulsalam Al-Shuwaier, Sheikh Hassan Bukhari, and Sheikh Abdulrahman Al-Sudais for Makkah; and Sheikh Abdulrazzaq Al-Badr, Sheikh Saleh Al-Usaimi, and Sheikh Omar Falata for Madinah. The design follows the approved Moin presentation identity. Listening and understanding remain central, and Arabic text must remain readable right-to-left in both Arabic and English interfaces.

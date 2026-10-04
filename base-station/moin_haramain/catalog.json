@@ -6,12 +6,12 @@
     {"id": "madinah", "name": {"en": "The Prophet's Mosque", "ar": "المسجد النبوي"}, "city": {"en": "Madinah", "ar": "المدينة المنورة"}}
   ],
   "imams": [
-    {"id": "shuwaier", "mosque_id": "makkah", "name": {"en": "Sheikh Abdulsalam Al-Shuwaier", "ar": "الشيخ عبدالسلام الشويعر"}},
-    {"id": "bukhari", "mosque_id": "makkah", "name": {"en": "Sheikh Hassan Bukhari", "ar": "الشيخ حسن بخاري"}},
-    {"id": "sudais", "mosque_id": "makkah", "name": {"en": "Sheikh Abdulrahman Al-Sudais", "ar": "الشيخ عبدالرحمن السديس"}},
-    {"id": "badr", "mosque_id": "madinah", "name": {"en": "Sheikh Abdulrazzaq Al-Badr", "ar": "الشيخ عبدالرزاق البدر"}},
-    {"id": "usaimi", "mosque_id": "madinah", "name": {"en": "Sheikh Saleh Al-Usaimi", "ar": "الشيخ صالح العصيمي"}},
-    {"id": "falata", "mosque_id": "madinah", "name": {"en": "Sheikh Omar Falata", "ar": "الشيخ عمر فلاتة"}}
+    {"id": "shuwaier", "mosque_id": "makkah", "name": {"en": "Sheikh Abdulsalam Al-Shuwaier", "ar": "الشيخ عبدالسلام الشويعر"}, "portrait": "/haramain/portraits/shuwaier.jpg"},
+    {"id": "bukhari", "mosque_id": "makkah", "name": {"en": "Sheikh Hassan Bukhari", "ar": "الشيخ حسن بخاري"}, "portrait": "/haramain/portraits/bukhari.jpg"},
+    {"id": "sudais", "mosque_id": "makkah", "name": {"en": "Sheikh Abdulrahman Al-Sudais", "ar": "الشيخ عبدالرحمن السديس"}, "portrait": "/haramain/portraits/sudais.jpg"},
+    {"id": "badr", "mosque_id": "madinah", "name": {"en": "Sheikh Abdulrazzaq Al-Badr", "ar": "الشيخ عبدالرزاق البدر"}, "portrait": "/haramain/portraits/badr.jpg"},
+    {"id": "usaimi", "mosque_id": "madinah", "name": {"en": "Sheikh Saleh Al-Usaimi", "ar": "الشيخ صالح العصيمي"}, "portrait": "/haramain/portraits/usaimi.jpg"},
+    {"id": "falata", "mosque_id": "madinah", "name": {"en": "Sheikh Omar Falata", "ar": "الشيخ عمر فلاتة"}, "portrait": "/haramain/portraits/falata.jpg"}
   ],
   "sources": [
     {"id": "haram-lessons", "mosque_id": "makkah", "name": {"en": "Lectures from Al-Masjid Al-Haram", "ar": "دروس المسجد الحرام"}, "channel_id": "UC3QAoXf9GN9xeQYhk-AZbTg", "url": "https://www.youtube.com/channel/UC3QAoXf9GN9xeQYhk-AZbTg", "verified_at": "2026-10-03"},

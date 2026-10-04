@@ -691,6 +691,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self.file(HARAMAIN_STATIC / 'index.html')
             if path in {'/haramain/app.js', '/haramain/style.css'}:
                 return self.file(HARAMAIN_STATIC / path.rsplit('/', 1)[1])
+            portrait = re.fullmatch(r'/haramain/portraits/(badr|usaimi|falata|shuwaier|bukhari|sudais)\.jpg', path)
+            if portrait:
+                return self.file(HARAMAIN_STATIC / 'portraits' / f'{portrait[1]}.jpg')
             if path in {'/live', '/live/'} or re.fullmatch(rf'/live/(?:session|join)/{LIVE_ID}', path):
                 return self.file(LIVE_STATIC / 'index.html')
             if path in {'/live/app.js', '/live/style.css'}:

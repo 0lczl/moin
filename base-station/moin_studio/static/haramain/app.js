@@ -61,7 +61,7 @@ const copy = {
     catalogFailure: 'The Haramain collection is unavailable. Please refresh the page or try again later.',
     noTranslation: 'Translation was withheld for this passage. Please check the original Arabic audio.',
     partialNote: 'Translation is experimental and should be reviewed for religious meaning.',
-    sourceLabel: 'Verified institutional channel', count: 'recordings',
+    sourceLabel: 'Verified institutional channel', count: 'recordings', photoUnavailable: 'Photo unavailable',
   },
   ar: {
     header: 'مركز فيديو الحرمين', studio: 'استديو التسجيل', center: 'فيديوهات الحرمين', liveTranslator: 'المترجم المباشر',
@@ -102,7 +102,7 @@ const copy = {
     catalogFailure: 'مجموعة الحرمين غير متاحة حاليًا. حدّث الصفحة أو حاول لاحقًا.',
     noTranslation: 'حُجبت ترجمة هذا المقطع. راجع الصوت العربي الأصلي.',
     partialNote: 'الترجمة تجريبية، وتحتاج إلى مراجعة المعنى الشرعي.',
-    sourceLabel: 'قناة مؤسسية موثقة', count: 'تسجيلات',
+    sourceLabel: 'قناة مؤسسية موثقة', count: 'تسجيلات', photoUnavailable: 'الصورة غير متاحة',
   },
 };
 const t = key => copy[locale][key];
@@ -266,15 +266,43 @@ function renderMosque(mosqueId) {
     if (!shown.length) list.append(make('p', 'empty-state', videos.length ? t('empty') : t('noVideos')));
     else for (const video of shown) list.append(videoCard(video));
   }
-  for (const [id, text] of [['all', t('all')], ...imams.map(i => [i.id, nameOf(i.name)])]) {
-    const button = make('button', 'filter-button', text);
+  function selectImam(id) {
+    selected = id;
+    history.replaceState({}, '', id === 'all' ? mosqueUrl(mosqueId) : `${mosqueUrl(mosqueId)}?imam=${encodeURIComponent(id)}`);
+    drawCards();
+  }
+  const allButton = make('button', 'filter-button filter-all', t('all'));
+  allButton.type = 'button';
+  allButton.dataset.imam = 'all';
+  allButton.onclick = () => selectImam('all');
+  filters.append(allButton);
+  for (const imam of imams) {
+    const button = make('button', 'imam-button');
     button.type = 'button';
-    button.dataset.imam = id;
-    button.onclick = () => {
-      selected = id;
-      history.replaceState({}, '', id === 'all' ? mosqueUrl(mosqueId) : `${mosqueUrl(mosqueId)}?imam=${encodeURIComponent(id)}`);
-      drawCards();
-    };
+    button.dataset.imam = imam.id;
+    const portrait = make('span', 'imam-portrait');
+    const photo = make('img');
+    photo.src = imam.portrait;
+    photo.alt = '';
+    photo.width = 92;
+    photo.height = 104;
+    photo.loading = 'lazy';
+    photo.decoding = 'async';
+    const fallback = make('span', 'portrait-fallback', t('photoUnavailable'));
+    fallback.hidden = true;
+    fallback.setAttribute('aria-hidden', 'true');
+    photo.addEventListener('error', () => { photo.hidden = true; fallback.hidden = false; });
+    portrait.append(photo, fallback);
+    const names = make('span', 'imam-names');
+    const primary = make('span', 'imam-name-primary', nameOf(imam.name));
+    primary.lang = locale;
+    primary.dir = locale === 'ar' ? 'rtl' : 'ltr';
+    const secondary = make('span', 'imam-name-secondary', imam.name[locale === 'ar' ? 'en' : 'ar']);
+    secondary.lang = locale === 'ar' ? 'en' : 'ar';
+    secondary.dir = locale === 'ar' ? 'ltr' : 'rtl';
+    names.append(primary, secondary);
+    button.append(portrait, names);
+    button.onclick = () => selectImam(imam.id);
     filters.append(button);
   }
   archive.append(filters, list);

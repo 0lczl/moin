@@ -56,3 +56,19 @@ html[lang=ar] .header-center{font-size:13px}
 /* Keep navigation and supporting labels readable at every viewport. */
 .workspace-label,.sidebar-bottom,.sidebar-bottom p,.sidebar-bottom small,.header-center,.video-card-top,.video-source{font-size:12px}
 @media(max-width:650px){.side-link,.header-center,html[lang=ar] .header-center{font-size:12px}}
+
+/* A scholar remains identifiable by name even when a portrait cannot load. */
+.imam-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.filter-all{grid-column:1/-1;justify-self:start;font-size:13px;min-height:42px}
+.imam-button{display:flex;align-items:center;gap:14px;min-width:0;min-height:120px;padding:12px;text-align:start;color:var(--ink);background:#fffefa;border:1px solid var(--line);transition:background .2s,border-color .2s}
+.imam-button:hover{background:var(--surface)}
+.imam-button[aria-pressed=true]{background:var(--green);color:var(--paper);border-color:var(--green)}
+.imam-portrait{display:flex;align-items:center;justify-content:center;flex:0 0 92px;width:92px;height:104px;overflow:hidden;background:var(--surface)}
+.imam-portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%}
+.portrait-fallback{padding:8px;text-align:center;font-size:12px;line-height:1.4;color:var(--ink)}
+.imam-names{display:flex;flex-direction:column;gap:5px;min-width:0;line-height:1.5}
+.imam-name-primary{font-size:14px;font-weight:700}
+.imam-name-secondary{font-size:12px;opacity:.78}
+@media(max-width:1050px){.imam-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.imam-filters{grid-template-columns:1fr}.imam-button{min-height:110px}.imam-portrait{height:92px}}
+@media(prefers-reduced-motion:reduce){.imam-button{transition:none}}
