@@ -34,9 +34,11 @@ they are already in that terminal's environment. It does not save the keys or
 put them on the command line, in Git, or in the browser. Enter them again after
 a restart. Never send keys in chat or screenshots.
 
-The command checks Groq first, before asking for DeepL and ElevenLabs keys. It
-then checks the required tools, curated Qur'an rendering registry, and public
-configuration before opening a tunnel. The Groq model lookup submits no audio.
+The command checks Groq first, then checks DeepL before asking for the
+ElevenLabs key. It then checks the required tools, curated Qur'an rendering
+registry, and public configuration before opening a tunnel. The Groq model
+lookup submits no audio; DeepL's usage lookup consumes no translation quota.
+The launcher selects the DeepL API Free or Pro host that accepts the key.
 HTTP 401 means the key was rejected; HTTP 403 can mean model permission is
 blocked. A Cloudflare 1010 response is a request/network block, not a bad key.
 If an old key is exported in the shell, run `unset GROQ_API_KEY` and restart.

@@ -54,8 +54,9 @@ def provider_environment() -> dict[str, str]:
 
     read_key(*KEYS[0])
     check_groq_credentials(env)
-    for name, label in KEYS[1:]:
-        read_key(name, label)
+    read_key(*KEYS[1])
+    check_deepl_credentials(env)
+    read_key(*KEYS[2])
     env.update({
         "MOIN_ASR_PROVIDER": "groq",
         "MOIN_LIVE_ASR": "groq",
@@ -120,6 +121,45 @@ def check_groq_credentials(env: dict[str, str], opener=urlopen) -> None:
         raise RuntimeError(f"Groq model check failed (HTTP {error.code}). Retry shortly.") from None
     except (URLError, TimeoutError, OSError):
         raise RuntimeError("Could not reach Groq to check the API key. Check the network and retry.") from None
+
+
+def check_deepl_credentials(env: dict[str, str], opener=urlopen) -> None:
+    """Verify the API key without consuming translated characters.
+
+    DeepL API Free and API Pro use different hosts. Save the host that actually
+    accepted the key so the machine uses the same one for translation.
+    """
+    key = env["DEEPL_AUTH_KEY"]
+    hosts = ("api-free.deepl.com", "api.deepl.com") if key.endswith(":fx") else (
+        "api.deepl.com", "api-free.deepl.com")
+    context = ssl.create_default_context(cafile=certifi.where())
+    for host in hosts:
+        request = Request(
+            f"https://{host}/v2/usage",
+            headers={
+                "Authorization": f"DeepL-Auth-Key {key}",
+                "Accept": "application/json",
+                "User-Agent": "Moin/1.0 (+https://github.com/0lczl/moin)",
+            },
+        )
+        try:
+            with opener(request, timeout=12, context=context) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"DeepL usage check returned HTTP {response.status}.")
+            env["DEEPL_API_BASE_URL"] = f"https://{host}"
+            return
+        except HTTPError as error:
+            if error.code in (401, 403):
+                if error.read(128).startswith(b"error code: 1010"):
+                    raise RuntimeError("Cloudflare blocked the request to DeepL before key validation.") from None
+                continue
+            raise RuntimeError(f"DeepL usage check failed (HTTP {error.code}). Retry shortly.") from None
+        except (URLError, TimeoutError, OSError):
+            raise RuntimeError("Could not reach DeepL to check the API key. Check the network and retry.") from None
+    raise RuntimeError(
+        "DeepL API Free and API Pro both rejected this key. Copy the API key from "
+        "your DeepL account's API Keys tab and retry. Do not paste it in chat."
+    )
 
 
 def free_port() -> int:
