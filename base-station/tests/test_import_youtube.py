@@ -131,3 +131,19 @@ def test_import_failures_have_safe_diagnostic_codes(stderr, expected):
         1, ["yt-dlp", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"], stderr=stderr,
     )
     assert import_youtube.import_failure_code(error) == expected
+
+
+def test_youtube_import_retries_access_denial_with_alternate_public_client(monkeypatch):
+    attempts = []
+
+    def run(command):
+        attempts.append(command)
+        if len(attempts) == 1:
+            raise subprocess.CalledProcessError(1, command, stderr="HTTP Error 403: Forbidden")
+        return subprocess.CompletedProcess(command, 0, "{}", "")
+
+    monkeypatch.setattr(import_youtube, "_run", run)
+    command = ["yt-dlp", "--dump-single-json", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"]
+    import_youtube._run_youtube(command)
+    assert attempts[0] == command
+    assert attempts[1][1:3] == ["--extractor-args", "youtube:player_client=web_embedded"]

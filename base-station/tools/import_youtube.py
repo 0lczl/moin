@@ -115,6 +115,24 @@ def import_failure_code(error: Exception) -> str:
     return "youtube_import_failed"
 
 
+def _run_youtube(command: list[str], *, temporary: Path | None = None) -> subprocess.CompletedProcess[str]:
+    """Retry access errors with public player clients supported by yt-dlp."""
+    clients = (None, "web_embedded", "android")
+    for index, client in enumerate(clients):
+        attempt = ([command[0], "--extractor-args", f"youtube:player_client={client}", *command[1:]]
+                   if client else command)
+        try:
+            return _run(attempt)
+        except subprocess.CalledProcessError as error:
+            code = import_failure_code(error)
+            if index == len(clients) - 1 or code not in {"youtube_access_blocked", "youtube_audio_unavailable"}:
+                raise
+            if temporary is not None:
+                for partial in temporary.glob("source.*"):
+                    partial.unlink(missing_ok=True)
+    raise AssertionError("unreachable")
+
+
 def import_video(url: str, out: Path, *, yt_dlp: Path | None = None, max_duration_seconds: int | None = None) -> Path:
     canonical, expected_id = canonical_url(url)
     out = Path(out)
@@ -137,7 +155,7 @@ def import_video(url: str, out: Path, *, yt_dlp: Path | None = None, max_duratio
 
     temporary = Path(tempfile.mkdtemp(prefix=f".{out.name}-", dir=out.parent))
     try:
-        probe = _run([executable, "--no-playlist", "--skip-download", "--dump-single-json", canonical])
+        probe = _run_youtube([executable, "--no-playlist", "--skip-download", "--dump-single-json", canonical])
         info = json.loads(probe.stdout)
         if not isinstance(info, dict) or info.get("id") != expected_id:
             raise ValueError("yt-dlp returned unexpected video metadata")
@@ -147,11 +165,11 @@ def import_video(url: str, out: Path, *, yt_dlp: Path | None = None, max_duratio
         if max_duration_seconds is not None and (not isinstance(duration, (int, float)) or isinstance(duration, bool) or duration <= 0 or duration > max_duration_seconds):
             raise ValueError(f"video must be a completed recording no longer than {max_duration_seconds // 60} minutes")
 
-        _run([
+        _run_youtube([
             executable, "--no-playlist", "--no-progress", "--no-write-info-json",
             "--no-write-playlist-metafiles", "-f", "bestaudio", "-o",
             str(temporary / "source.%(ext)s"), canonical,
-        ])
+        ], temporary=temporary)
         sources = [path for path in temporary.glob("source.*") if path.is_file()]
         if len(sources) != 1:
             raise RuntimeError("yt-dlp did not produce exactly one audio file")
