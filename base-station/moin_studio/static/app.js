@@ -16,6 +16,7 @@ Object.assign(copy, {
   'Processing could not finish. Check that the local models and Mac GPU are available, or try another media file.':'تعذّر إكمال المعالجة. تحقق من توفر النماذج المحلية ومعالج الرسوم، أو جرّب ملفًا آخر.',
   'The recording did not match its approved institutional channel. Check the official source link.':'لم يطابق التسجيل قناته المؤسسية المعتمدة. تحقق من رابط المصدر الرسمي.',
   'This recording could not be processed. Try another file or check the studio terminal.':'تعذّرت معالجة هذا التسجيل. جرّب ملفًا آخر أو راجع سجل الاستوديو.',
+  'YouTube blocked this server from importing the recording. Upload the audio or video file in the Studio instead.':'حجب يوتيوب استيراد التسجيل على هذا الخادم. ارفع ملف الصوت أو الفيديو في الاستوديو بدلًا من الرابط.',
   'Recording must contain at most five minutes of playable audio.':'يجب ألا يزيد التسجيل على خمس دقائق من الصوت القابل للتشغيل.',
   'Upload interrupted. Please try again.':'انقطع الرفع. حاول مجددًا.'
 });

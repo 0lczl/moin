@@ -51,7 +51,7 @@ def test_private_job_is_visible_only_to_its_anonymous_browser(public_server):
     jid, _ = app.reserve('lesson.wav', owner_token=read_session_cookie(owner_cookie))
     output = app.root / jid / 'output'
     output.mkdir()
-    (output / 'result.json').write_text('{"result":"private"}')
+    (output / 'result.json').write_text('{"segments":[]}')
     app.update(jid, state='completed')
 
     own = json.loads(request(public_server, 'GET', '/api/state', cookie=owner_cookie)[2])
@@ -73,6 +73,23 @@ def test_public_upload_requires_initialized_session_and_same_origin(public_serve
     status, _, _ = request(public_server, 'POST', '/api/upload', body=b'a',
                            cookie=cookie, origin='https://foreign.example')
     assert status == 403
+
+
+def test_public_static_assets_are_cached_without_caching_session_state(public_server):
+    connection = http.client.HTTPConnection('127.0.0.1', public_server[1], timeout=5)
+    connection.request('GET', '/welcome.css', headers={'Host': 'moin.example'})
+    response = connection.getresponse()
+    assert response.status == 200
+    assert response.getheader('Cache-Control') == 'public, max-age=300'
+    response.read()
+    connection.close()
+
+    connection = http.client.HTTPConnection('127.0.0.1', public_server[1], timeout=5)
+    connection.request('GET', '/api/state', headers={'Host': 'moin.example'})
+    response = connection.getresponse()
+    assert response.getheader('Cache-Control') == 'no-store'
+    response.read()
+    connection.close()
 
 
 def test_render_demo_exposes_ephemeral_state_and_health(tmp_path, monkeypatch):

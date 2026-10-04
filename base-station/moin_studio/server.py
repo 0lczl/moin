@@ -1,6 +1,7 @@
 """Local Studio server and restricted public-pilot HTTP service for Moin."""
 from __future__ import annotations
 import argparse
+import hashlib
 import json
 import io
 import ipaddress
@@ -15,6 +16,7 @@ import subprocess
 import sys
 import threading
 import time
+import wave
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote, urlsplit
 
@@ -41,6 +43,7 @@ PUBLIC_UPLOAD_LIMIT = 64 * 1024 * 1024
 EXTENSIONS = {'.wav', '.mp3', '.m4a', '.mp4', '.webm', '.ogg', '.flac', '.aiff', '.mov'}
 YOUTUBE_MAX_SECONDS = 300
 HARAMAIN_STATIC = STATIC / 'haramain'
+HARAMAIN_AUDIO = BASE / 'moin_haramain' / 'audio'
 HARAMAIN_PIPELINE = 'haramain-v1'
 LIVE_STATIC = STATIC / 'live'
 LIVE_ID = r'[A-Za-z0-9_-]{24,32}'
@@ -224,6 +227,29 @@ class Studio:
     def catalog_version(self):
         return f'{HARAMAIN_PIPELINE}:{self.candidate}'
 
+    def catalog_audio(self, url):
+        """Use verified source audio packaged for the small approved catalog."""
+        canonical, video_id = canonical_url(url)
+        folder = HARAMAIN_AUDIO / video_id
+        if not folder.is_dir():
+            return None
+        catalog, video = self.catalog_video(video_id)
+        source = next(item for item in catalog['sources'] if item['id'] == video['source_id'])
+        metadata = json.loads((folder / 'metadata.json').read_text())
+        audio = folder / 'audio.wav'
+        if (video['url'] != canonical or video['state'] != 'available'
+                or metadata.get('video_id') != video_id
+                or metadata.get('source_url') != canonical
+                or metadata.get('channel_id') != source['channel_id']
+                or hashlib.sha256(audio.read_bytes()).hexdigest() != metadata.get('audio_sha256')):
+            raise SourceMismatch('The packaged recording does not match its approved source')
+        with wave.open(str(audio), 'rb') as stream:
+            duration = stream.getnframes() / stream.getframerate()
+            if ((stream.getnchannels(), stream.getsampwidth(), stream.getframerate(), stream.getcomptype())
+                    != (1, 2, 16000, 'NONE') or abs(duration - video['duration_seconds']) > 2):
+                raise SourceMismatch('The packaged recording does not match its approved source')
+        return folder
+
     def catalog_job(self, video):
         version = self.catalog_version()
         with self.lock:
@@ -322,7 +348,9 @@ class Studio:
                         import_started = time.perf_counter()
                         self.update(jid, state='processing', progress_stage='importing', message='Importing recorded YouTube audio')
                         with diagnostics.stage('youtube_import'):
-                            imported = import_video(job['source_url'], folder / 'youtube-import', max_duration_seconds=YOUTUBE_MAX_SECONDS)
+                            imported = (self.catalog_audio(job['source_url']) or
+                                        import_video(job['source_url'], folder / 'youtube-import',
+                                                     max_duration_seconds=YOUTUBE_MAX_SECONDS))
                         youtube_import_ms = round((time.perf_counter() - import_started) * 1000, 3)
                         shutil.copyfile(imported / 'audio.wav', audio)
                         metadata = json.loads((imported / 'metadata.json').read_text())
@@ -428,9 +456,12 @@ class Studio:
                     with self.lock:
                         self.processes.pop(jid, None)
                         if job['state'] != 'cancelled':
+                            message = ('YouTube blocked this server from importing the recording. Upload the audio or video file in the Studio instead.'
+                                       if failure_code == 'youtube_access_blocked'
+                                       else 'This recording could not be processed. Try another file or check the studio terminal.')
                             self.update(jid, state='failed', finished=time.time(),
                                         failure_code=failure_code,
-                                        message='This recording could not be processed. Try another file or check the studio terminal.')
+                                        message=message)
 
     @staticmethod
     def make_playback(folder, result):
@@ -588,10 +619,10 @@ class Handler(BaseHTTPRequestHandler):
                 InvalidManagementSecret) as error:
             return self.live_error(error)
 
-    def headers_common(self, content_type, length):
+    def headers_common(self, content_type, length, *, cache_control='no-store'):
         self.send_header('Content-Type', content_type)
         self.send_header('Content-Length', str(length))
-        self.send_header('Cache-Control', 'no-store')
+        self.send_header('Cache-Control', cache_control)
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Content-Security-Policy', "default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self'; media-src 'self' blob:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'")
 
@@ -620,7 +651,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json({'error':'Range outside file'},416)
             status = 206
         self.send_response(status)
-        self.headers_common(mimetypes.guess_type(path.name)[0] or 'application/octet-stream', end-start+1)
+        static_asset = (path.is_relative_to(STATIC) or path.is_relative_to(BRAND))
+        self.headers_common(mimetypes.guess_type(path.name)[0] or 'application/octet-stream', end-start+1,
+                            cache_control='public, max-age=300' if static_asset else 'no-store')
         self.send_header('Accept-Ranges','bytes')
         if status == 206:
             self.send_header('Content-Range',f'bytes {start}-{end}/{size}')

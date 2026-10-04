@@ -57,6 +57,7 @@ const copy = {
     noText: 'Text is unavailable for this passage.',
     caution: 'Machine-generated wording may contain errors. Check important meanings against the original Arabic audio.',
     sourceFailure: 'The source could not be imported or processed. Please use the official link and try later.',
+    sourceBlocked: 'YouTube blocked this server from importing the lesson. Open the original video or upload a recording in the Studio.',
     catalogFailure: 'The Haramain collection is unavailable. Please refresh the page or try again later.',
     noTranslation: 'Translation is unavailable for this passage. Please check the original Arabic audio.',
     credentialMissing: 'Translation needs DeepL to be configured. Once it is available, prepare this lesson again.',
@@ -100,6 +101,7 @@ const copy = {
     noText: 'النص غير متاح لهذا المقطع.',
     caution: 'قد يحتوي النص الآلي على أخطاء. راجع المعاني المهمة بمقارنتها بالصوت العربي الأصلي.',
     sourceFailure: 'تعذر استيراد المصدر أو معالجته. افتح الرابط الرسمي وحاول لاحقًا.',
+    sourceBlocked: 'حجب يوتيوب استيراد الدرس على هذا الخادم. افتح الفيديو الأصلي أو ارفع تسجيلًا في الاستوديو.',
     catalogFailure: 'مجموعة الحرمين غير متاحة حاليًا. حدّث الصفحة أو حاول لاحقًا.',
     noTranslation: 'لا تتوفر ترجمة لهذا المقطع. استمع إلى الصوت العربي الأصلي.',
     credentialMissing: 'تحتاج الترجمة إلى ضبط مفتاح DeepL. أعد إعداد الدرس بعد توفيره.',
@@ -343,7 +345,11 @@ function statusLabel(job) {
     else if (stage !== 'importing' && current && count) label += ` · ${t('segmentProgress')} ${current} ${t('of')} ${count}`;
     return label;
   }
-  if (job.state === 'failed') return job.message?.includes('approved institutional channel') ? t('sourceMismatch') : t('sourceFailure');
+  if (job.state === 'failed') {
+    if (job.failure_code === 'source_mismatch') return t('sourceMismatch');
+    if (job.failure_code === 'youtube_access_blocked') return t('sourceBlocked');
+    return t('sourceFailure');
+  }
   if (job.state === 'interrupted') return t('interrupted');
   if (job.state === 'partial') return t('partial');
   if (job.state === 'completed') return t('ready');

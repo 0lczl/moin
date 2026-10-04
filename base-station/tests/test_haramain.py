@@ -1,8 +1,10 @@
 """Catalog trust and the recorded-video route through the local Studio."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import time
+import wave
 
 import pytest
 
@@ -17,6 +19,32 @@ def test_seed_is_official_and_six_clips_are_within_import_limit():
     assert {v['imam_id'] for v in catalog['videos']} == {i['id'] for i in catalog['imams']}
     assert all(i['portrait'] == f'/haramain/portraits/{i["id"]}.jpg' for i in catalog['imams'])
     assert all(v['duration_seconds'] <= studio_server.YOUTUBE_MAX_SECONDS for v in catalog['videos'])
+
+
+def test_packaged_catalog_audio_requires_matching_source_and_digest(tmp_path, monkeypatch):
+    video_id = 'D3ofKhOUnXI'
+    url = f'https://www.youtube.com/watch?v={video_id}'
+    folder = tmp_path / 'catalog-audio' / video_id
+    folder.mkdir(parents=True)
+    audio = folder / 'audio.wav'
+    with wave.open(str(audio), 'wb') as stream:
+        stream.setparams((1, 2, 16000, 0, 'NONE', 'not compressed'))
+        stream.writeframes(bytes(32000))
+    metadata = {
+        'video_id': video_id, 'source_url': url, 'channel_id': 'UCofficial',
+        'audio_sha256': hashlib.sha256(audio.read_bytes()).hexdigest(),
+    }
+    (folder / 'metadata.json').write_text(json.dumps(metadata))
+    monkeypatch.setattr(studio_server, 'HARAMAIN_AUDIO', tmp_path / 'catalog-audio')
+    app = studio_server.Studio(tmp_path / 'runs')
+    monkeypatch.setattr(app, 'catalog_video', lambda _id: (
+        {'sources': [{'id': 'approved', 'channel_id': 'UCofficial'}]},
+        {'id': video_id, 'url': url, 'source_id': 'approved', 'state': 'available', 'duration_seconds': 1},
+    ))
+    assert app.catalog_audio(url) == folder
+    audio.write_bytes(audio.read_bytes() + b'altered')
+    with pytest.raises(studio_server.SourceMismatch):
+        app.catalog_audio(url)
 
 
 @pytest.mark.parametrize('mutation', [
