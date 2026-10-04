@@ -62,6 +62,20 @@ def test_upload_process_result_and_audio_seek(service):
     assert call(service,'GET','/brand/../../.git/config')[0]==404
 
 
+def test_welcome_and_studio_are_separate_direct_routes(service):
+    status, welcome = call(service, 'GET', '/')
+    assert status == 200 and b'id="hero-title"' in welcome and b'href="/studio"' in welcome
+    assert b'/welcome-assets/prayer-english.mp3' in welcome
+    assert b'/welcome-assets/prayer-french.mp3' in welcome
+    status, studio = call(service, 'GET', '/studio')
+    assert status == 200 and b'id="upload-form"' in studio and b'id="youtube-form"' in studio
+    for path in ('/haramain', '/haramain/makkah', '/live', '/favicon.svg', '/welcome.css', '/locale.js',
+                 '/welcome-assets/prayer-source.wav', '/welcome-assets/prayer-english.mp3',
+                 '/welcome-assets/prayer-french.mp3', '/welcome-assets/studio-result.jpg',
+                 '/welcome-assets/studio.jpg', '/welcome-assets/live.jpg'):
+        assert call(service, 'GET', path)[0] == 200
+
+
 def test_foreign_pages_cannot_start_inference(service):
     assert call(service,'POST','/api/upload',b'a',**{'Origin':'https://example.com','X-Moin-Token':service[0].token})[0]==403
     assert call(service,'POST','/api/upload',b'a',Origin=f'http://127.0.0.1:{service[1]}')[0]==403

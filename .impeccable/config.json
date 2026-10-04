@@ -33,6 +33,24 @@
         ],
         "createdAt": "2026-10-03T15:48:53.834Z",
         "reason": "DESIGN-GUIDE.md permits Latin uppercase tracking; detected uses are short uppercase workspace, status, and navigation labels, not running body copy."
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "base-station/moin_studio/static/welcome.html"
+        ],
+        "createdAt": "2026-10-04T12:12:58.997Z",
+        "reason": "Agent: the colored sections contain .section-wrap with 24–84px inline padding; text is not flush with the section edge"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "base-station/moin_studio/static/welcome.html"
+        ],
+        "createdAt": "2026-10-04T12:12:59.059Z",
+        "reason": "Project DESIGN-GUIDE.md: ivory #F5F3EE is the approved Moin main background color"
       }
     ]
   }

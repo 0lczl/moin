@@ -120,7 +120,7 @@ def split_wav(source: Path, directory: Path, seconds: int) -> list[tuple[Path, f
     return result
 
 
-def _pre_translation_guard(registry: dict[str, Any]) -> Callable[[str], dict[str, str] | None]:
+def _pre_translation_guard(registry: dict[str, Any], *, review_mixed_speech: bool = False) -> Callable[[str], dict[str, str] | None]:
     def guard(arabic: str) -> dict[str, str] | None:
         decision = safety.route(arabic, "", "", None, registry)
         guard.decision = decision  # type: ignore[attr-defined]
@@ -128,6 +128,12 @@ def _pre_translation_guard(registry: dict[str, Any]) -> Callable[[str], dict[str
             return None
         if decision["outcome"] == "quran_rendering":
             return {"en": decision["en"], "fr": decision["fr"]}
+        if review_mixed_speech and decision.get("reason") == "possible_quran_or_mixed_speech":
+            # A visitor explicitly requesting this recorded lesson can see an
+            # experimental rendering, clearly marked for comparison with audio.
+            # Exact Qur'anic matches still use the approved source above.
+            guard.decision = {**decision, "outcome": "review_required"}  # type: ignore[attr-defined]
+            return None
         # The adapter treats uncertainty as a hard stop before calling MT.
         return {"uncertainty": str(decision["reason"])}
     guard.decision = None  # type: ignore[attr-defined]
@@ -159,9 +165,9 @@ def _final_safety(result: dict[str, Any], registry: dict[str, Any], predecision:
         # possible-Qur'an hold is represented as candidate uncertainty by the
         # adapter, which takes precedence when the final route runs.
         decision = safety.route(result.get("arabic", ""), result.get("en", ""), result.get("fr", ""), result.get("uncertainty"), registry)
-    elif isinstance(predecision, dict) and predecision.get("outcome") in {"ordinary_translation", "quran_rendering", "withheld"}:
+    elif isinstance(predecision, dict) and predecision.get("outcome") in {"ordinary_translation", "quran_rendering", "review_required", "withheld"}:
         decision = dict(predecision)
-        if decision["outcome"] == "ordinary_translation":
+        if decision["outcome"] in {"ordinary_translation", "review_required"}:
             decision["en"], decision["fr"] = result.get("en", "") or "", result.get("fr", "") or ""
     else:
         decision = safety.route(result.get("arabic", ""), result.get("en", ""), result.get("fr", ""), result.get("uncertainty"), registry)
@@ -244,7 +250,7 @@ def run_machine(
             for number, (audio, start, end) in enumerate(split_segments, 1):
                 check_cancelled()
                 _progress(progress_callback, "segment_started", stage="asr_translation", current_segment=number, segment_count=len(split_segments))
-                guard = _pre_translation_guard(registry)
+                guard = _pre_translation_guard(registry, review_mixed_speech=getattr(args, "review_mixed_speech", False))
                 guard_started: float | None = None
 
                 def timed_guard(arabic: str) -> dict[str, str] | None:
@@ -323,6 +329,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--out", type=Path, required=True, help="new output directory")
     p.add_argument("--segment-seconds", type=int, default=30)
     p.add_argument("--say", action="store_true", help="synthesize non-withheld EN/FR segment speech with ElevenLabs")
+    p.add_argument("--review-mixed-speech", action="store_true", help="mark possible mixed Qur'anic speech for review while translating (curated lessons only)")
     return p
 
 

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#16311f">
+  <title>Moin — Follow Arabic teaching with care</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/brand/presentation/fonts.css">
+  <link rel="stylesheet" href="/welcome.css">
+  <script src="/locale.js" defer></script>
+  <script src="/welcome.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#content" data-i18n="skip">Skip to content</a>
+  <header class="welcome-header">
+    <a class="welcome-brand" href="/" aria-label="Moin home"><img src="/brand/presentation/moin-logo.svg" alt="مُعين — Moin"></a>
+    <nav class="welcome-nav" aria-label="Moin services">
+      <a href="/studio" data-i18n="studio">Recording studio</a>
+      <a href="/haramain" data-i18n="videos">Haramain videos</a>
+      <a href="/live" data-i18n="live">Live translator</a>
+    </nav>
+    <div class="locale-switch" role="group" aria-label="Interface language">
+      <button type="button" data-locale="en" aria-pressed="true">EN</button>
+      <button type="button" data-locale="ar" aria-pressed="false">عربي</button>
+    </div>
+  </header>
+  <main id="content" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <div class="hero-language-scene" aria-hidden="true">
+            <div class="hero-language-cube">
+              <span class="cube-face cube-front"></span><span class="cube-face cube-back"></span>
+              <span class="cube-face cube-right"></span><span class="cube-face cube-left"></span>
+              <span class="cube-face cube-top"></span><span class="cube-face cube-bottom"></span>
+              <span class="cube-label cube-front" lang="ar" dir="rtl">العربية</span>
+              <span class="cube-label cube-back" lang="en">English</span>
+              <span class="cube-label cube-right" lang="fr">Français</span>
+              <span class="cube-label cube-left" lang="zh-Hans">中文</span>
+              <span class="cube-label cube-top" lang="ja">日本語</span>
+              <span class="cube-label cube-bottom" lang="es">Español</span>
+            </div>
+          </div>
+          <h1 id="hero-title" data-i18n="headline">Translation as It Should Be</h1>
+          <div class="hero-actions">
+            <a class="button-primary" href="/studio"><span data-i18n="tryStudio">Try the recording studio</span><span aria-hidden="true">↗</span></a>
+            <a class="button-text" href="#example" data-i18n="seeHow">See how it works ↓</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="example" class="example-section section-wrap" aria-labelledby="example-heading">
+      <div class="section-heading"><h2 id="example-heading" data-i18n="exampleHeading">Hear two translated examples.</h2></div>
+      <div class="example-grid">
+        <div class="example-content">
+          <div class="audio-source"><div><strong data-i18n="sourceTitle">Original Arabic audio</strong><span data-i18n="sourceDetail">Recorded teaching · 8 seconds</span></div><audio controls preload="metadata" src="/welcome-assets/prayer-source.wav" aria-label="Play original Arabic audio"><span data-i18n="audioFallback">Your browser cannot play this audio.</span></audio></div>
+          <div class="sample-line"><span data-i18n="transcriptLabel">Machine-generated Arabic transcript</span><p lang="ar" dir="rtl">وكيف يفرغ المرء قلبه من شواغل الدنيا في الصلاة أن يبكر لمصلاة قبل الوقت المرء إذا جاء لاهثا مسرعا</p></div>
+          <section class="translation-example" aria-labelledby="english-example-heading"><h3 id="english-example-heading" data-i18n="englishExample">English example</h3><span data-i18n="englishLabel">Machine-generated translation</span><p lang="en" dir="ltr">And how can one empty one’s heart of worldly concerns through prayer? By arriving early at the mosque before the time of prayer—if one comes breathless</p><div class="translation-audio"><span data-i18n="englishVoice">English voice · ElevenLabs</span><audio controls preload="none" src="/welcome-assets/prayer-english.mp3" aria-label="Play English translation"><span data-i18n="audioFallback">Your browser cannot play this audio.</span></audio></div></section>
+          <section class="translation-example" aria-labelledby="french-example-heading"><h3 id="french-example-heading" data-i18n="frenchExample">French example</h3><span data-i18n="frenchLabel">Machine-generated translation</span><p lang="fr" dir="ltr">Et comment peut-on libérer son cœur des soucis de ce monde dans la prière ? En se rendant à la mosquée avant l'heure, si l'on arrive essoufflé</p><div class="translation-audio"><span data-i18n="frenchVoice">French voice · ElevenLabs</span><audio controls preload="none" src="/welcome-assets/prayer-french.mp3" aria-label="Play French translation"><span data-i18n="audioFallback">Your browser cannot play this audio.</span></audio></div></section>
+        </div>
+        <figure class="product-shot"><img src="/welcome-assets/studio-result.jpg" alt="Moin recording reader showing a separate result with original audio, Arabic transcript and translation tabs" loading="lazy"><span class="media-fallback" hidden data-i18n="imageFallback">Product screenshot unavailable; the example text remains above.</span></figure>
+      </div>
+    </section>
+    <section class="paths-section" aria-labelledby="paths-heading"><div class="section-wrap"><div class="section-heading"><h2 id="paths-heading" data-i18n="pathsHeading">Choose how you want to listen.</h2></div>
+      <div class="service-list">
+        <a href="/studio" class="service-row"><span class="service-title" data-i18n="studio">Recording studio</span><span class="service-detail" data-i18n="studioDetail">Upload audio or video, or import a recorded YouTube lesson. Read the Arabic and translations together.</span><span class="service-arrow" aria-hidden="true">↗</span></a>
+        <a href="/haramain" class="service-row"><span class="service-title" data-i18n="videos">Haramain videos</span><span class="service-detail" data-i18n="videosDetail">Find recorded lessons from selected scholars at the Grand Mosque and the Prophet’s Mosque.</span><span class="service-arrow" aria-hidden="true">↗</span></a>
+        <a href="/live" class="service-row"><span class="service-title" data-i18n="live">Live translator</span><span class="service-detail" data-i18n="liveDetail">Create a room and share a listener link for English or French text as speech is processed.</span><span class="service-arrow" aria-hidden="true">↗</span></a>
+      </div>
+      <div class="screenshots"><figure class="product-shot"><img src="/welcome-assets/studio.jpg" alt="Current Moin recording studio upload and YouTube import" loading="lazy"><figcaption data-i18n="studioCaption">The current recording studio</figcaption><span class="media-fallback" hidden data-i18n="imageFallback">Product screenshot unavailable; the service link remains available.</span></figure><figure class="product-shot"><img src="/welcome-assets/live.jpg" alt="Current Moin live translator room form" loading="lazy"><figcaption data-i18n="liveCaption">The current live-room entry</figcaption><span class="media-fallback" hidden data-i18n="imageFallback">Product screenshot unavailable; the service link remains available.</span></figure></div>
+    </div></section>
+    <section class="steps-section section-wrap" aria-labelledby="steps-heading"><div class="section-heading"><h2 id="steps-heading" data-i18n="stepsHeading">From recording to reading in three steps.</h2></div><ol class="steps"><li><strong data-i18n="step1Title">Bring a recording</strong><p data-i18n="step1Detail">Choose a file or a recorded YouTube lesson.</p></li><li><strong data-i18n="step2Title">Let Moin prepare it</strong><p data-i18n="step2Detail">Moin transcribes Arabic and prepares English and French text. Speech is offered when available.</p></li><li><strong data-i18n="step3Title">Read with the original</strong><p data-i18n="step3Detail">Compare each passage with its Arabic audio, and check important meanings carefully.</p></li></ol></section>
+    <section class="closing"><div class="section-wrap closing-inner"><div><h2 data-i18n="closingHeading">Start with a voice worth listening to.</h2><p data-i18n="closingDetail">Moin is an experimental aid for understanding. It does not replace careful review of religious meaning.</p></div><a class="button-primary" href="/studio"><span data-i18n="tryStudio">Try the recording studio</span><span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="welcome-footer"><a href="/" aria-label="Moin home"><img src="/brand/presentation/moin-logo.svg" alt=""></a><span data-i18n="footer">Made for careful listening.</span></footer>
+</body>
+</html>

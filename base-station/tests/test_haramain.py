@@ -41,6 +41,7 @@ def haramain_service(tmp_path):
     class Process:
         pid = 999999
         def __init__(self, command, **kwargs):
+            assert '--review-mixed-speech' in command
             folder = Path(command[command.index('--out') + 1]); folder.mkdir()
             (folder / 'source.wav').write_bytes(b'audio')
             (folder / 'result.json').write_text(json.dumps({'segments': [
@@ -97,9 +98,15 @@ def test_catalog_route_deduplicates_jobs_and_reuses_result(monkeypatch, haramain
         if job['state'] == 'completed': break
         time.sleep(.01)
     assert job['state'] == 'completed'
+    assert job['missing_speech'] == 2
     assert len(haramain_service[0].list_jobs()) == 1
     status, payload = call(haramain_service, 'GET', f'/api/jobs/{job["id"]}/result')
     assert status == 200 and json.loads(payload)['segments'][0]['result']['fr'] == 'Français'
+    status, payload = call(haramain_service, 'POST', f'/api/haramain/videos/{video["id"]}/process',
+                           b'{"retry":true}', **headers)
+    retried = json.loads(payload)
+    assert status == 202 and retried['created'] is True
+    assert retried['job']['id'] != job['id']
 
 
 def test_invalid_catalog_does_not_publish(monkeypatch, haramain_service, tmp_path):

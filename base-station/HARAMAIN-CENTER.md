@@ -54,8 +54,17 @@ links to the official source and never promises live translation.
    become ready. Reopening the same lesson follows that job; a completed
    result remains available after Studio restarts.
 5. Play the Arabic original, read its transcript, switch to English or French,
-   and press **Listen to this translation** if speech was created. Playback
-   never starts automatically.
+   and press **Listen to this translation** if speech was created. When every
+   segment has speech, **Play the full translation** continues through them in
+   order. Playback never starts automatically.
+
+Existing incomplete catalog results offer **Prepare translations and speech
+again**. This creates a new job and preserves the old result. A mixed passage
+that may contain a Qur'anic quotation is translated for this curated lesson
+with an explicit review warning; an exact verse still uses its approved
+rendering. Provider failures, empty transcripts, and other withheld cases do
+not acquire invented text or audio. DeepL and ElevenLabs credentials must be
+present in the running Studio process for a complete translated playback.
 
 For a reliable presentation, process one approved short recording in advance
 and inspect the Arabic and both translations. The six catalog entries have not

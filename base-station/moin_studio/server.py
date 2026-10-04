@@ -234,7 +234,7 @@ class Studio:
                        and job['state'] in {'queued', 'processing', 'completed', 'partial', 'failed', 'interrupted'}]
             return dict(max(matches, key=lambda job: job['created'])) if matches else None
 
-    def start_catalog_video(self, video_id):
+    def start_catalog_video(self, video_id, *, retry=False):
         _, video = self.catalog_video(video_id)
         if video['state'] != 'available':
             raise VideoUnavailable('This recording is currently unavailable. Open its official source for details.')
@@ -242,7 +242,8 @@ class Studio:
             raise VideoTooLong('This recording is longer than the current five-minute processing limit.')
         with self.lock:
             existing = self.catalog_job(video)
-            if existing and existing['state'] in {'queued', 'processing', 'completed', 'partial'}:
+            if existing and (existing['state'] in {'queued', 'processing'}
+                             or (not retry and existing['state'] in {'completed', 'partial'})):
                 return existing, False
             jid = self.reserve_youtube(video['url'], catalog_video_id=video_id,
                                        catalog_version=self.catalog_version())
@@ -263,7 +264,7 @@ class Studio:
             if process and process.poll() is None:
                 os.killpg(process.pid, signal.SIGTERM)
 
-    def machine_args(self, audio, output):
+    def machine_args(self, audio, output, *, review_mixed_speech=False):
         return argparse.Namespace(
             audio=audio,
             config=BASE / 'benchmark-data/local-comparison.json',
@@ -272,13 +273,14 @@ class Studio:
             out=output,
             segment_seconds=30,
             say=True,
+            review_mixed_speech=review_mixed_speech,
         )
 
     def run_job(self, jid, audio, output, log, progress_callback=None):
         """Run in the long-lived Studio process so the approved ASR stays warm."""
         if self.runner is None:
             return self.processor(
-                self.machine_args(audio, output),
+                self.machine_args(audio, output, review_mixed_speech=bool(self.jobs[jid].get('catalog_video_id'))),
                 should_cancel=lambda: self.jobs[jid]['state'] == 'cancelled',
                 progress_callback=progress_callback,
             )
@@ -289,6 +291,8 @@ class Studio:
                    '--config', str(BASE / 'benchmark-data/local-comparison.json'), '--candidate', self.candidate,
                    '--renderings', str(BASE / 'benchmark-data/staging-renderings/renderings.quranenc.json'),
                    '--out', str(output), '--say']
+        if self.jobs[jid].get('catalog_video_id'):
+            command.append('--review-mixed-speech')
         with self.lock:
             process = self.runner(command, cwd=BASE, env={**os.environ, 'HF_HUB_OFFLINE':'1'}, stdout=log, stderr=log, start_new_session=True)
             self.processes[jid] = process
@@ -392,6 +396,11 @@ class Studio:
                     if result is not None:
                         failures = sum(bool(x['result'].get('failure')) for x in result['segments'])
                         withheld = sum(x['safety']['outcome'] == 'withheld' for x in result['segments'])
+                        missing_speech = sum(
+                            bool(x['result'].get(language))
+                            and x.get('synthesis', {}).get(language, {}).get('status') != 'created'
+                            for x in result['segments'] for language in ('en', 'fr')
+                        )
                         with diagnostics.stage('playback_preparation'):
                             self.make_playback(folder / 'output', result)
                         finished = time.time()
@@ -399,7 +408,7 @@ class Studio:
                         timing.update(machine=machine_ms, processing=round((finished - started) * 1000, 3))
                         if job.get('source') == 'youtube':
                             timing['youtube_import'] = youtube_import_ms
-                        self.update(jid, state='partial' if failures else 'completed', finished=finished, failures=failures, withheld=withheld, timing_ms=timing,
+                        self.update(jid, state='partial' if failures else 'completed', finished=finished, failures=failures, withheld=withheld, missing_speech=missing_speech, timing_ms=timing,
                                     message='Some segments failed. Inspect the result.' if failures else 'Ready to read and listen')
                     else:
                         self.update(jid, state='failed', finished=time.time(), message='Processing could not finish. Check that the local models and Mac GPU are available, or try another media file.')
@@ -430,6 +439,34 @@ class Studio:
                     target = folder / (Path(name).stem + '.wav')
                     if name.endswith('.aiff') and not target.exists():
                         subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(folder/name),str(target)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False, timeout=60)
+
+        # Join complete ElevenLabs segment sets into seekable lesson audio.
+        for language in ('en', 'fr'):
+            names = []
+            for segment in result['segments']:
+                speech = segment.get('synthesis', {}).get(language, {})
+                name = speech.get('file', '')
+                if speech.get('status') != 'created' or not re.fullmatch(rf'segment-\d{{4,}}-{language}\.mp3', name) or not (folder / name).is_file():
+                    names = []
+                    break
+                names.append(name)
+            if not names:
+                continue
+            target = folder / f'full-{language}.mp3'
+            if target.exists() and target.stat().st_mtime >= max((folder / name).stat().st_mtime for name in names):
+                continue
+            manifest = folder / f'.full-{language}.ffconcat'
+            temporary = folder / f'full-{language}.pending.mp3'
+            try:
+                manifest.write_text('ffconcat version 1.0\n' + ''.join(f"file '{name}'\n" for name in names))
+                run = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-f', 'concat', '-safe', '1', '-i', str(manifest), '-c', 'copy', '-y', str(temporary)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False, timeout=120)
+                if run.returncode == 0 and temporary.is_file() and temporary.stat().st_size:
+                    temporary.replace(target)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+            finally:
+                manifest.unlink(missing_ok=True)
+                temporary.unlink(missing_ok=True)
 
     def output(self, jid):
         if jid == 'demo':
@@ -672,14 +709,16 @@ class Handler(BaseHTTPRequestHandler):
             if match:
                 if not self.can_read_job(app, match[1]):
                     return self.send_json({'error':'Result is not available'},404)
-                result = json.loads((app.output(match[1])/'result.json').read_text())
+                output = app.output(match[1])
+                result = json.loads((output/'result.json').read_text())
+                app.make_playback(output, result)
                 return self.send_json(result)
             match = re.fullmatch(r'/media/([a-z0-9]+)/([a-zA-Z0-9_.-]+)',path)
             if match:
                 if not self.can_read_job(app, match[1]):
                     return self.send_json({'error':'File not available'},404)
                 filename = match[2]
-                if filename not in {'source.wav','transcript.txt','en.txt','fr.txt','result.json'} and not re.fullmatch(r'segment-\d{4,}-(en|fr)\.(mp3|wav|aiff)',filename):
+                if filename not in {'source.wav','transcript.txt','en.txt','fr.txt','result.json','full-en.mp3','full-fr.mp3'} and not re.fullmatch(r'segment-\d{4,}-(en|fr)\.(mp3|wav|aiff)',filename):
                     return self.send_json({'error':'File not available'},404)
                 return self.file(app.output(match[1])/filename)
             if path.startswith('/brand/'):
@@ -698,8 +737,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self.file(LIVE_STATIC / 'index.html')
             if path in {'/live/app.js', '/live/style.css'}:
                 return self.file(LIVE_STATIC / path.rsplit('/', 1)[1])
-            if path in {'/','/app.js','/style.css'}:
-                return self.file(STATIC/('index.html' if path == '/' else path[1:]))
+            if path == '/':
+                return self.file(STATIC / 'welcome.html')
+            if path in {'/studio', '/studio/'}:
+                return self.file(STATIC / 'index.html')
+            if path in {'/welcome.css', '/welcome.js', '/locale.js', '/favicon.svg', '/app.js', '/style.css'}:
+                return self.file(STATIC / path[1:])
+            if re.fullmatch(r'/welcome-assets/(prayer-source\.wav|prayer-english\.mp3|prayer-french\.mp3|studio-result\.jpg|studio\.jpg|live\.jpg)', path):
+                return self.file(STATIC / path[1:])
             return self.send_json({'error':'Not found'},404)
         except (RoomNotFound, RoomEnded, ListenerNotFound, InvalidManagementSecret) as error:
             return self.live_error(error)
@@ -729,7 +774,13 @@ class Handler(BaseHTTPRequestHandler):
         match = re.fullmatch(r'/api/haramain/videos/([A-Za-z0-9_-]{11})/process', path)
         if match:
             try:
-                job, created = app.start_catalog_video(match[1])
+                body = self.read_json(limit=64)
+                if set(body) - {'retry'} or type(body.get('retry', False)) is not bool:
+                    raise ValueError('Invalid retry flag')
+            except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+                return self.send_json({'code': 'invalid_request'}, 400)
+            try:
+                job, created = app.start_catalog_video(match[1], retry=body.get('retry', False))
                 return self.send_json({'job': job, 'created': created}, 202)
             except KeyError:
                 return self.send_json({'code': 'not_found'}, 404)

@@ -42,7 +42,8 @@ def copy_canonical(source, destination):
     Path(destination).write_bytes(Path(source).read_bytes())
 
 
-def test_quran_is_guarded_before_translation_and_may_use_approved_speech(tmp_path):
+@pytest.mark.parametrize('review_mixed_speech', [False, True])
+def test_quran_is_guarded_before_translation_and_may_use_approved_speech(tmp_path, review_mixed_speech):
     audio, config, registry = inputs(tmp_path)
     called = []
 
@@ -51,7 +52,9 @@ def test_quran_is_guarded_before_translation_and_may_use_approved_speech(tmp_pat
         assert guard == {"en": "All praise is due to God", "fr": "Louange à Dieu"}
         return {"arabic": "الحمد لله رب العالمين", "en": guard["en"], "fr": guard["fr"], "uncertainty": None, "failure": None, "timing_ms": {}}
 
-    result = run_machine(args(audio, config, registry, tmp_path / "run", say=True), process=process, canonicalizer=copy_canonical, speaker=lambda *_: called.append(True) or {"status": "failed", "provider": "elevenlabs", "code": "fixture", "message": "fixture"})
+    options = args(audio, config, registry, tmp_path / "run", say=True)
+    options.review_mixed_speech = review_mixed_speech
+    result = run_machine(options, process=process, canonicalizer=copy_canonical, speaker=lambda *_: called.append(True) or {"status": "failed", "provider": "elevenlabs", "code": "fixture", "message": "fixture"})
     assert result["segments"][0]["safety"]["outcome"] == "quran_rendering"
     assert len(called) == 2
     assert result["segments"][0]["synthesis"] == {"en": {"status": "failed", "provider": "elevenlabs", "code": "fixture", "message": "fixture"}, "fr": {"status": "failed", "provider": "elevenlabs", "code": "fixture", "message": "fixture"}}
@@ -75,6 +78,31 @@ def test_withheld_text_is_never_passed_to_speech(tmp_path):
     assert (tmp_path / "run" / "en.txt").read_text() == "\n"
 
 
+def test_curated_lesson_can_render_mixed_speech_with_review_warning(tmp_path):
+    audio, config, registry = inputs(tmp_path)
+    calls = []
+    options = args(audio, config, registry, tmp_path / "run", say=True)
+    options.review_mixed_speech = True
+
+    def process(_config, _audio, *, translation_guard):
+        assert translation_guard("الحمد لله رب العالمين كلام") is None
+        return {"arabic": "الحمد لله رب العالمين كلام", "en": "A passage with commentary",
+                "fr": "Un passage avec commentaire", "uncertainty": None, "failure": None, "timing_ms": {}}
+
+    def speaker(text, language, destination):
+        calls.append((language, text))
+        destination.write_bytes(language.encode())
+        return {"status": "created", "provider": "fixture", "file": destination.name}
+
+    result = run_machine(options, process=process, canonicalizer=copy_canonical, speaker=speaker)
+    segment = result["segments"][0]
+    assert segment["safety"]["outcome"] == "review_required"
+    assert segment["safety"]["reason"] == "possible_quran_or_mixed_speech"
+    assert segment["result"]["en"] == "A passage with commentary"
+    assert {language for language, _ in calls} == {"en", "fr"}
+    assert (tmp_path / "run" / "en.txt").read_text().strip() == "A passage with commentary"
+
+
 def test_rejects_existing_output_without_touching_it(tmp_path):
     audio, config, registry = inputs(tmp_path)
     output = tmp_path / "run"
@@ -86,13 +114,16 @@ def test_rejects_existing_output_without_touching_it(tmp_path):
     assert marker.read_text() == "keep"
 
 
-def test_candidate_failure_is_recorded_and_withheld(tmp_path):
+@pytest.mark.parametrize('review_mixed_speech', [False, True])
+def test_candidate_failure_is_recorded_and_withheld(tmp_path, review_mixed_speech):
     audio, config, registry = inputs(tmp_path)
 
     def failed(*_, **__):
         return {"arabic": "", "en": "unsafe partial", "fr": "partial dangereux", "uncertainty": None, "failure": {"code": "candidate_failed"}, "timing_ms": {}}
 
-    result = run_machine(args(audio, config, registry, tmp_path / "run"), process=failed, canonicalizer=copy_canonical)
+    options = args(audio, config, registry, tmp_path / "run")
+    options.review_mixed_speech = review_mixed_speech
+    result = run_machine(options, process=failed, canonicalizer=copy_canonical)
     assert result["segments"][0]["safety"]["reason"] == "candidate_failure"
     assert (tmp_path / "run" / "en.txt").read_text() == "\n"
     assert "unsafe partial" not in (tmp_path / "run" / "index.html").read_text()

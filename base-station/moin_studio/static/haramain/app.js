@@ -12,7 +12,7 @@ const nameOf = value => value?.[locale] || value?.en || '';
 const videoUrl = id => `/haramain/video/${id}`;
 const mosqueUrl = id => `/haramain/${id}`;
 const duration = seconds => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
-let locale = localStorage.getItem('moin-locale') === 'ar' ? 'ar' : 'en';
+let locale = MoinLocale.read();
 let catalog = null;
 let token = '';
 let pollTimer = null;
@@ -24,17 +24,16 @@ let publicMode = null;
 const copy = {
   en: {
     header: 'HARAMAIN VIDEO CENTER', studio: 'Recording studio', center: 'Haramain videos', liveTranslator: 'Live translator',
-    workspace: 'YOUR WORKSPACE', device: 'On your Mac', deviceNote: 'Recordings stay on this device.', publicDevice: 'On Moin servers', publicDeviceNote: 'Recordings are processed by Moin.', neutralDevice: 'Moin service', neutralDeviceNote: 'Processing location is being checked.',
-    reviewNote: 'Experimental · review the meaning', footer: 'Listen to the original. Read with care.',
+    workspace: 'YOUR WORKSPACE',
     homeTitle: 'From the two holy mosques, closer to understanding.',
-    homeIntro: 'Choose a mosque, find a recorded lesson from a verified institutional channel, and follow its Arabic words with English or French meaning.',
+    homeIntro: 'Choose a mosque and browse lessons in your language.',
     choose: 'Choose a mosque', recorded: 'Recorded lessons', imams: 'Featured scholars',
     expansion: 'More scholars and official sources will be added.',
     live: 'Official broadcast', archive: 'Previous videos', all: 'All scholars',
     noLive: 'No live broadcast is currently verified for this mosque.',
     noLiveDetail: 'Previous recordings are available below.',
     liveAvailable: 'Open official broadcast', checked: 'Verified',
-    liveCaution: 'Broadcasts open at their official source. Live translation is not available here yet.',
+    liveCaution: 'The broadcast opens from its official source.',
     source: 'Source', official: 'Official source', openSource: 'Open original video',
     read: 'Open in Moin', back: 'Back to collection', processing: 'Processing',
     empty: 'No recordings for this scholar yet. Choose another scholar or view all.',
@@ -59,23 +58,25 @@ const copy = {
     caution: 'Machine-generated wording may contain errors. Check important meanings against the original Arabic audio.',
     sourceFailure: 'The source could not be imported or processed. Please use the official link and try later.',
     catalogFailure: 'The Haramain collection is unavailable. Please refresh the page or try again later.',
-    noTranslation: 'Translation was withheld for this passage. Please check the original Arabic audio.',
+    noTranslation: 'Translation is unavailable for this passage. Please check the original Arabic audio.',
+    credentialMissing: 'Translation needs DeepL to be configured. Once it is available, prepare this lesson again.',
+    retryTranslations: 'Prepare translations and speech again',
+    fullEnglish: 'Full English audio', fullFrench: 'Full French audio',
     partialNote: 'Translation is experimental and should be reviewed for religious meaning.',
-    sourceLabel: 'Verified institutional channel', count: 'recordings', photoUnavailable: 'Photo unavailable',
+    count: 'recordings', photoUnavailable: 'Photo unavailable',
   },
   ar: {
     header: 'مركز فيديو الحرمين', studio: 'استديو التسجيل', center: 'فيديوهات الحرمين', liveTranslator: 'المترجم المباشر',
-    workspace: 'مساحة العمل', device: 'على جهازك', deviceNote: 'تبقى التسجيلات على هذا الجهاز.', publicDevice: 'على خوادم معين', publicDeviceNote: 'تُعالَج التسجيلات عبر خوادم معين.', neutralDevice: 'خدمة معين', neutralDeviceNote: 'جارٍ التحقق من مكان المعالجة.',
-    reviewNote: 'خدمة تجريبية · راجع المعنى', footer: 'استمع إلى الأصل، واقرأ بتأنٍ.',
+    workspace: 'مساحة العمل',
     homeTitle: 'من الحرمين الشريفين إلى فهمٍ أقرب.',
-    homeIntro: 'اختر المسجد، وتصفح درسًا مسجلًا من قناة مؤسسية موثقة، واقرأ النص العربي ومعناه بالإنجليزية أو الفرنسية.',
+    homeIntro: 'إختر المسجد، وتصفح الدروس بلغتك!',
     choose: 'اختر المسجد', recorded: 'دروس مسجلة', imams: 'المشايخ المختارون',
     expansion: 'سنضيف مزيدًا من المشايخ والمصادر الرسمية لاحقًا.',
     live: 'البث الرسمي', archive: 'الفيديوهات السابقة', all: 'جميع المشايخ',
     noLive: 'لا يوجد بث مباشر متحقق منه حاليًا لهذا المسجد.',
     noLiveDetail: 'التسجيلات السابقة متاحة أدناه.',
     liveAvailable: 'افتح البث الرسمي', checked: 'تم التحقق',
-    liveCaution: 'يفتح البث في مصدره الرسمي. الترجمة الفورية للبث غير متاحة هنا بعد.',
+    liveCaution: 'يفتح البث من مصدره الرسمي.',
     source: 'المصدر', official: 'المصدر الرسمي', openSource: 'افتح الفيديو الأصلي',
     read: 'افتح في مُعين', back: 'العودة للمجموعة', processing: 'جارٍ المعالجة',
     empty: 'لا توجد تسجيلات لهذا الشيخ بعد. اختر شيخًا آخر أو اعرض الجميع.',
@@ -100,9 +101,12 @@ const copy = {
     caution: 'قد يحتوي النص الآلي على أخطاء. راجع المعاني المهمة بمقارنتها بالصوت العربي الأصلي.',
     sourceFailure: 'تعذر استيراد المصدر أو معالجته. افتح الرابط الرسمي وحاول لاحقًا.',
     catalogFailure: 'مجموعة الحرمين غير متاحة حاليًا. حدّث الصفحة أو حاول لاحقًا.',
-    noTranslation: 'حُجبت ترجمة هذا المقطع. راجع الصوت العربي الأصلي.',
+    noTranslation: 'لا تتوفر ترجمة لهذا المقطع. استمع إلى الصوت العربي الأصلي.',
+    credentialMissing: 'تحتاج الترجمة إلى ضبط مفتاح DeepL. أعد إعداد الدرس بعد توفيره.',
+    retryTranslations: 'أعد إعداد الترجمة والصوت',
+    fullEnglish: 'الصوت الإنجليزي كاملًا', fullFrench: 'الصوت الفرنسي كاملًا',
     partialNote: 'الترجمة تجريبية، وتحتاج إلى مراجعة المعنى الشرعي.',
-    sourceLabel: 'قناة مؤسسية موثقة', count: 'تسجيلات', photoUnavailable: 'الصورة غير متاحة',
+    count: 'تسجيلات', photoUnavailable: 'الصورة غير متاحة',
   },
 };
 const t = key => copy[locale][key];
@@ -116,10 +120,6 @@ function applyLocale() {
   document.getElementById('studio-label').textContent = t('studio');
   document.getElementById('haramain-label').textContent = t('center');
   document.getElementById('live-label').textContent = t('liveTranslator');
-  document.getElementById('device-label').textContent = t(publicMode === null ? 'neutralDevice' : publicMode ? 'publicDevice' : 'device');
-  document.getElementById('device-note').textContent = t(publicMode === null ? 'neutralDeviceNote' : publicMode ? 'publicDeviceNote' : 'deviceNote');
-  document.getElementById('review-note').textContent = t('reviewNote');
-  document.getElementById('footer-line').textContent = t('footer');
   document.querySelector('.skip-link').textContent = tr('Skip to content', 'انتقل إلى المحتوى');
   document.querySelector('.sidebar').setAttribute('aria-label', tr('Workspace navigation', 'التنقل في مساحة العمل'));
   document.querySelector('.sidebar-nav').setAttribute('aria-label', tr('Workspace', 'مساحة العمل'));
@@ -193,7 +193,7 @@ function renderHome() {
   for (const mosque of catalog.mosques) {
     const card = internal(link('', mosqueUrl(mosque.id), `location-card location-${mosque.id}`));
     const metadata = make('div', 'location-meta');
-    metadata.append(make('span', '', nameOf(mosque.city)), make('span', '', `${catalog.videos.filter(v => v.mosque_id === mosque.id).length} ${t('recorded')}`));
+    metadata.append(make('span', '', nameOf(mosque.city)));
     card.append(metadata, make('h2', '', nameOf(mosque.name)));
     const bottom = make('div', 'location-bottom');
     bottom.append(make('span', '', t('choose')), iconArrow());
@@ -201,7 +201,7 @@ function renderHome() {
     locations.append(card);
   }
   const intro = make('div', 'home-collection-line');
-  intro.append(make('span', '', t('sourceLabel')), make('span', '', t('expansion')));
+  intro.append(make('span', '', t('expansion')));
   main.append(breadcrumb([{text: t('center')}]), hero, locations, intro);
 }
 
@@ -252,7 +252,7 @@ function renderMosque(mosqueId) {
   intro.append(make('p', 'city-label', nameOf(mosque.city)), heading(nameOf(mosque.name)));
   intro.append(make('p', 'expansion-note', t('expansion')));
   const archive = make('section', 'archive-section');
-  archive.append(titleRow(t('archive'), videos.length));
+  archive.append(titleRow(t('archive')));
   const filters = make('div', 'imam-filters');
   filters.setAttribute('role', 'group');
   filters.setAttribute('aria-label', t('imams'));
@@ -283,12 +283,12 @@ function renderMosque(mosqueId) {
     const portrait = make('span', 'imam-portrait');
     const photo = make('img');
     photo.src = imam.portrait;
-    photo.alt = '';
+    photo.alt = tr(`Portrait of ${nameOf(imam.name)}`, `صورة ${nameOf(imam.name)}`);
     photo.width = 92;
     photo.height = 104;
     photo.loading = 'lazy';
     photo.decoding = 'async';
-    const fallback = make('span', 'portrait-fallback', t('photoUnavailable'));
+    const fallback = make('span', 'portrait-fallback', `${nameOf(imam.name)} · ${t('photoUnavailable')}`);
     fallback.hidden = true;
     fallback.setAttribute('aria-hidden', 'true');
     photo.addEventListener('error', () => { photo.hidden = true; fallback.hidden = false; });
@@ -364,12 +364,38 @@ function renderVideoFrame(video, imam, source, job) {
   details.append(make('span', '', nameOf(imam.name)), make('span', '', `${t('source')}: ${nameOf(source.name)}`));
   head.append(details);
   const sourceLine = make('div', 'source-line');
-  sourceLine.append(make('span', '', t('sourceLabel')), external(t('openSource'), video.url, 'text-link'));
+  sourceLine.append(external(t('openSource'), video.url, 'text-link'));
   head.append(sourceLine);
   const content = make('section', 'detail-content');
   content.id = 'result-content';
   main.append(path, head, content);
   renderJob(video, job);
+}
+async function requestProcessing(video, button, container, retry = false) {
+  button.disabled = true;
+  button.textContent = t('waiting');
+  try {
+    await ensureToken();
+    const response = await fetch(`/api/haramain/videos/${video.id}/process`, {
+      method: 'POST', headers: {'Content-Type': 'application/json', 'X-Moin-Token': token},
+      body: JSON.stringify(retry ? {retry: true} : {}),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const messages = {
+        video_unavailable: t('unavailable'), video_too_long: t('tooLong'),
+        queue_full: t('queueFull'), catalog_unavailable: t('catalogFailure'),
+        not_found: t('failed'),
+      };
+      throw Error(response.status === 403 ? t('reload') : messages[data.code] || t('failed'));
+    }
+    renderJob(video, data.job);
+    if (['queued', 'processing'].includes(data.job.state)) beginPolling(video.id);
+  } catch (error) {
+    container.append(make('p', 'error-message', error.message || t('failed')));
+    button.disabled = false;
+    button.textContent = retry ? t('retryTranslations') : t('retry');
+  }
 }
 function renderJob(video, job) {
   const container = document.getElementById('result-content');
@@ -381,6 +407,12 @@ function renderJob(video, job) {
   }
   if (job && ['completed', 'partial'].includes(job.state)) {
     if (job.state === 'partial') container.append(make('p', 'status-panel caution', t('partial')));
+    if (job.failures || job.withheld || job.missing_speech) {
+      const retry = make('button', 'start-button result-retry', t('retryTranslations'));
+      retry.type = 'button';
+      retry.onclick = () => requestProcessing(video, retry, container, true);
+      container.append(retry);
+    }
     renderReader(container, job.id);
     return;
   }
@@ -395,31 +427,7 @@ function renderJob(video, job) {
   } else {
     const button = make('button', 'start-button', job ? t('retry') : t('start'));
     button.type = 'button';
-    button.onclick = async () => {
-      button.disabled = true;
-      button.textContent = t('waiting');
-      try {
-        await ensureToken();
-        const response = await fetch(`/api/haramain/videos/${video.id}/process`, {
-          method: 'POST', headers: {'Content-Type': 'application/json', 'X-Moin-Token': token}, body: '{}',
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          const messages = {
-            video_unavailable: t('unavailable'), video_too_long: t('tooLong'),
-            queue_full: t('queueFull'), catalog_unavailable: t('catalogFailure'),
-            not_found: t('failed'),
-          };
-          throw Error(response.status === 403 ? t('reload') : messages[data.code] || t('failed'));
-        }
-        renderJob(video, data.job);
-        if (['queued', 'processing'].includes(data.job.state)) beginPolling(video.id);
-      } catch (error) {
-        box.append(make('p', 'error-message', error.message || t('failed')));
-        button.disabled = false;
-        button.textContent = t('retry');
-      }
-    };
+    button.onclick = () => requestProcessing(video, button, box);
     box.append(button);
   }
   container.append(box);
@@ -434,6 +442,9 @@ async function renderReader(container, jobId) {
     if (location.pathname !== videoUrl(currentVideo)) return;
     placeholder.remove();
     const reader = make('div', 'reader');
+    if (result.segments?.some(item => item.safety?.outcome === 'review_required')) {
+      reader.append(make('p', 'status-panel caution', t('caution')));
+    }
     const player = make('div', 'original-player');
     const label = make('label', '', t('original'));
     label.htmlFor = 'original-audio';
@@ -448,6 +459,62 @@ async function renderReader(container, jobId) {
     };
     player.append(label, original);
     reader.append(player);
+    for (const language of ['en', 'fr']) {
+      const complete = result.segments?.length && result.segments.every(item => {
+        const speech = item.synthesis?.[language];
+        return speech?.status === 'created' && new RegExp(`^segment-\\d{4,}-${language}\\.mp3$`).test(speech.file);
+      });
+      if (!complete) continue;
+      const translatedPlayer = make('div', 'original-player translated-player');
+      const translatedLabel = make('label', '', t(language === 'en' ? 'fullEnglish' : 'fullFrench'));
+      const translatedAudio = make('audio');
+      translatedAudio.id = `full-${language}-audio`;
+      translatedAudio.controls = true;
+      translatedAudio.preload = 'metadata';
+      translatedAudio.src = `/media/${jobId}/full-${language}.mp3`;
+      const segmentFiles = result.segments.map(item => `/media/${jobId}/${item.synthesis[language].file}`);
+      const fallbackAudio = make('audio');
+      fallbackAudio.preload = 'none';
+      fallbackAudio.hidden = true;
+      const fallbackButton = make('button', 'start-button full-audio-fallback', t(language === 'en' ? 'fullEnglish' : 'fullFrench'));
+      fallbackButton.type = 'button';
+      fallbackButton.hidden = true;
+      let segmentIndex = 0;
+      const playNext = () => {
+        if (segmentIndex >= segmentFiles.length) {
+          fallbackButton.textContent = t(language === 'en' ? 'fullEnglish' : 'fullFrench');
+          if (activeSpeechAudio === fallbackAudio) activeSpeechAudio = null;
+          return;
+        }
+        fallbackAudio.src = segmentFiles[segmentIndex];
+        fallbackAudio.play().then(() => {
+          fallbackButton.textContent = `${t('pause')} · ${segmentIndex + 1}/${segmentFiles.length}`;
+        }).catch(() => { fallbackButton.textContent = t('noSpeech'); });
+      };
+      fallbackAudio.onended = () => { segmentIndex += 1; playNext(); };
+      fallbackAudio.onpause = () => {
+        if (activeSpeechAudio === fallbackAudio) activeSpeechAudio = null;
+        fallbackButton.textContent = t(language === 'en' ? 'fullEnglish' : 'fullFrench');
+      };
+      fallbackButton.onclick = () => {
+        if (activeSpeechAudio === fallbackAudio && !fallbackAudio.paused) { fallbackAudio.pause(); return; }
+        original.pause();
+        if (activeSpeechAudio) activeSpeechAudio.pause();
+        activeSpeechAudio = fallbackAudio;
+        segmentIndex = 0;
+        playNext();
+      };
+      translatedAudio.onerror = () => { translatedAudio.hidden = true; fallbackButton.hidden = false; };
+      translatedLabel.htmlFor = translatedAudio.id;
+      translatedAudio.onplay = () => {
+        original.pause();
+        if (activeSpeechAudio && activeSpeechAudio !== translatedAudio) activeSpeechAudio.pause();
+        activeSpeechAudio = translatedAudio;
+      };
+      translatedAudio.onpause = () => { if (activeSpeechAudio === translatedAudio) activeSpeechAudio = null; };
+      translatedPlayer.append(translatedLabel, translatedAudio, fallbackAudio, fallbackButton);
+      reader.append(translatedPlayer);
+    }
     const tabs = make('div', 'reader-tabs');
     tabs.setAttribute('role', 'tablist');
     tabs.setAttribute('aria-label', t('language'));
@@ -475,7 +542,8 @@ async function renderReader(container, jobId) {
           original.play().catch(() => {});
         };
         const body = make('div', 'segment-body');
-        const text = make('p', 'segment-text', item.result?.[activeLanguage] || (activeLanguage !== 'arabic' && item.safety?.outcome === 'withheld' ? t('noTranslation') : t('noText')));
+        const missingTranslation = item.result?.failure?.code === 'credential_unavailable' ? t('credentialMissing') : t('noTranslation');
+        const text = make('p', 'segment-text', item.result?.[activeLanguage] || (activeLanguage !== 'arabic' ? missingTranslation : t('noText')));
         text.lang = activeLanguage === 'arabic' ? 'ar' : activeLanguage;
         text.dir = activeLanguage === 'arabic' ? 'rtl' : 'ltr';
         body.append(text);
@@ -483,6 +551,7 @@ async function renderReader(container, jobId) {
           const speech = item.synthesis?.[activeLanguage];
           if (speech?.status === 'created' && /^[a-zA-Z0-9_.-]+\.(mp3|wav|aiff)$/.test(speech.file)) {
             const audio = make('audio');
+            audio.controls = true;
             audio.preload = 'none';
             audio.src = `/media/${jobId}/${speech.file.replace(/\.aiff$/, '.wav')}`;
             const listen = make('button', 'listen-button', t('listen'));
@@ -584,7 +653,7 @@ function render() {
 }
 document.querySelectorAll('[data-locale]').forEach(button => button.onclick = () => {
   locale = button.dataset.locale;
-  localStorage.setItem('moin-locale', locale);
+  MoinLocale.save(locale);
   render();
 });
 window.addEventListener('popstate', render);
