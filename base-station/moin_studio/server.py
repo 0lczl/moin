@@ -173,6 +173,29 @@ class Studio:
             return sorted(({k: v for k, v in j.items() if k != 'owner_fingerprint'} for j in jobs),
                           key=lambda j: j['created'], reverse=True)
 
+    def matching_upload(self, digest, size, owner_token):
+        """Reuse only this browser's intact result or active job for identical bytes."""
+        if not re.fullmatch(r'[0-9a-f]{64}', digest) or not isinstance(size, int) or size < 1:
+            raise ValueError('Invalid recording fingerprint')
+        with self.lock:
+            for job in sorted(self.jobs.values(), key=lambda item: item['created'], reverse=True):
+                if (job.get('source') == 'youtube' or job['state'] not in
+                        {'queued', 'processing', 'completed', 'partial'}):
+                    continue
+                if self.public_mode and not can_access(job, owner_token):
+                    continue
+                source = self.root / job['id'] / ('input' + job['suffix'])
+                if not source.is_file() or source.stat().st_size != size:
+                    continue
+                if job.get('input_sha256') != digest:
+                    # Jobs created before fingerprints were recorded remain reusable.
+                    if hashlib.sha256(source.read_bytes()).hexdigest() != digest:
+                        continue
+                if job['state'] in {'completed', 'partial'} and not (self.root / job['id'] / 'output' / 'result.json').is_file():
+                    continue
+                return {k: v for k, v in job.items() if k != 'owner_fingerprint'}
+        return None
+
     def reserve(self, name, owner_token=None):
         suffix = Path(name).suffix.lower()
         if suffix not in EXTENSIONS:
@@ -592,8 +615,14 @@ class Handler(BaseHTTPRequestHandler):
         return read_session_cookie(self.headers.get('Cookie'))
 
     def client_ip(self):
-        candidate = (self.headers.get('X-Moin-Client-IP') if self.server.app.public_mode
-                     else None) or self.client_address[0]
+        # Render's Cloudflare edge overwrites CF-Connecting-IP. The socket is
+        # Render's shared proxy and would put every visitor in one rate bucket.
+        if self.server.app.public_mode and os.environ.get('RENDER_EXTERNAL_URL'):
+            candidate = self.headers.get('CF-Connecting-IP') or self.client_address[0]
+        elif self.server.app.public_mode:
+            candidate = self.headers.get('X-Moin-Client-IP') or self.client_address[0]
+        else:
+            candidate = self.client_address[0]
         return str(ipaddress.ip_address(candidate))
 
     def can_read_job(self, app, jid):
@@ -869,11 +898,15 @@ class Handler(BaseHTTPRequestHandler):
         if not self.valid_host() or origin not in allowed or (app.public_mode and token is None) or \
                 (not app.public_mode and not secrets.compare_digest(self.headers.get('X-Moin-Token',''), app.token)):
             return self.send_json({'error':'Reload the studio and try again'},403)
-        if app.public_mode and (path in {'/api/upload','/api/youtube'} or path.endswith('/process')):
+        if path == '/api/uploads/lookup':
             try:
-                app.start_throttle.check(self.client_ip())
-            except (RateLimitExceeded, ValueError):
-                return self.send_json({'error':'Too many processing requests. Try again later.'},429)
+                body = self.read_json(limit=256)
+                if set(body) != {'sha256', 'size'} or type(body['size']) is not int:
+                    raise ValueError('Invalid recording fingerprint')
+                job = app.matching_upload(body['sha256'], body['size'], token)
+                return self.send_json({'job': job})
+            except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+                return self.send_json({'error':'Invalid recording fingerprint'},400)
         match = re.fullmatch(r'/api/haramain/videos/([A-Za-z0-9_-]{11})/process', path)
         if match:
             try:
@@ -883,8 +916,12 @@ class Handler(BaseHTTPRequestHandler):
             except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
                 return self.send_json({'code': 'invalid_request'}, 400)
             try:
+                if app.public_mode:
+                    app.start_throttle.check(self.client_ip())
                 job, created = app.start_catalog_video(match[1], retry=body.get('retry', False))
                 return self.send_json({'job': job, 'created': created}, 202)
+            except RateLimitExceeded:
+                return self.send_json({'code': 'rate_limited'}, 429)
             except KeyError:
                 return self.send_json({'code': 'not_found'}, 404)
             except VideoUnavailable:
@@ -911,8 +948,13 @@ class Handler(BaseHTTPRequestHandler):
                 body = json.loads(self.rfile.read(length).decode('utf-8'))
                 if not isinstance(body, dict) or set(body) != {'url'} or not isinstance(body['url'], str):
                     raise ValueError('Enter one recorded YouTube link.')
+                canonical_url(body['url'])
+                if app.public_mode:
+                    app.start_throttle.check(self.client_ip())
                 jid = app.reserve_youtube(body['url'], owner_token=token)
                 return self.send_json({'id': jid}, 202)
+            except RateLimitExceeded:
+                return self.send_json({'error':'Too many processing requests. Try again later.'},429)
             except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
                 return self.send_json({'error': str(error)}, 400)
         if path != '/api/upload': return self.send_json({'error':'Not found'},404)
@@ -921,17 +963,22 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < length <= app.upload_limit:
                 return self.send_json({'error':f'Choose a recording between 1 byte and {app.upload_limit // 1024 // 1024} MB'},413)
             name = unquote(self.headers.get('X-Filename','recording.wav'))
+            if app.public_mode:
+                app.start_throttle.check(self.client_ip())
             jid, destination = app.reserve(name, owner_token=token)
+        except RateLimitExceeded:
+            return self.send_json({'error':'Too many processing requests. Try again later.'},429)
         except ValueError as error:
             return self.send_json({'error':str(error)},400)
         try:
             self.connection.settimeout(120)
             with destination.open('xb') as stream:
                 remaining = length
+                digest = hashlib.sha256()
                 while remaining:
                     chunk = self.rfile.read(min(65536,remaining))
                     if not chunk: raise OSError('Incomplete upload')
-                    stream.write(chunk); remaining -= len(chunk)
+                    stream.write(chunk); digest.update(chunk); remaining -= len(chunk)
             if app.public_mode:
                 try:
                     probe = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration',
@@ -944,7 +991,8 @@ class Handler(BaseHTTPRequestHandler):
                     destination.unlink(missing_ok=True)
                     app.update(jid,state='failed',finished=time.time(),message='Recording must contain at most five minutes of playable audio.')
                     return self.send_json({'error':'Recording must contain at most five minutes of playable audio.'},400)
-            app.update(jid,state='queued',queued=time.time(),message='Waiting for local processing')
+            app.update(jid,state='queued',queued=time.time(),message='Waiting for local processing',
+                       input_sha256=digest.hexdigest(), input_size=length)
             app.wake.set()
             return self.send_json({'id':jid},202)
         except OSError:

@@ -16,6 +16,8 @@ from tools import import_youtube
     "https://youtube.com/shorts/dQw4w9WgXcQ",
     "https://youtu.be/dQw4w9WgXcQ",
     "https://youtube.com/shorts/dQw4w9WgXcQ?si=shared",
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s&ab_channel=Shared",
+    "https://youtu.be/dQw4w9WgXcQ?si=shared&t=42",
 ])
 def test_canonical_supported_urls(url):
     assert import_youtube.canonical_url(url) == (

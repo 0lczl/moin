@@ -1,5 +1,6 @@
 """Public pilot privacy behavior exercised at the HTTP boundary."""
 import http.client
+import hashlib
 import json
 import threading
 
@@ -21,13 +22,15 @@ def public_server(tmp_path, monkeypatch):
     server.server_close()
 
 
-def request(service, method, path, *, body=None, cookie=None, origin=None):
+def request(service, method, path, *, body=None, cookie=None, origin=None, extra_headers=None):
     connection = http.client.HTTPConnection('127.0.0.1', service[1], timeout=5)
     headers = {'Host': 'moin.example'}
     if cookie:
         headers['Cookie'] = cookie
     if origin:
         headers['Origin'] = origin
+    if extra_headers:
+        headers.update(extra_headers)
     connection.request(method, path, body=body, headers=headers)
     response = connection.getresponse()
     status = response.status
@@ -90,6 +93,59 @@ def test_public_static_assets_are_cached_without_caching_session_state(public_se
     assert response.getheader('Cache-Control') == 'no-store'
     response.read()
     connection.close()
+
+
+def test_same_browser_can_reopen_completed_upload_without_another_processing_start(public_server):
+    app, _ = public_server
+    _, cookie_header, _ = request(public_server, 'GET', '/api/state')
+    cookie = cookie_header.split(';', 1)[0]
+    from moin_studio.public_access import read_session_cookie
+    content = b'recorded audio from this browser'
+    jid, destination = app.reserve('lesson.wav', owner_token=read_session_cookie(cookie))
+    destination.write_bytes(content)
+    output = app.root / jid / 'output'
+    output.mkdir()
+    (output / 'result.json').write_text('{"segments":[]}')
+    app.update(jid, state='completed')
+    payload = json.dumps({'sha256': hashlib.sha256(content).hexdigest(), 'size': len(content)})
+    headers = {'Content-Type': 'application/json'}
+    for _ in range(5):
+        status, _, body = request(public_server, 'POST', '/api/uploads/lookup', body=payload,
+                                  cookie=cookie, origin='https://moin.example', extra_headers=headers)
+        assert status == 200
+        assert json.loads(body)['job']['id'] == jid
+    assert not app.start_throttle._starts
+    _, other_header, _ = request(public_server, 'GET', '/api/state')
+    other = other_header.split(';', 1)[0]
+    status, _, body = request(public_server, 'POST', '/api/uploads/lookup', body=payload,
+                              cookie=other, origin='https://moin.example', extra_headers=headers)
+    assert status == 200 and json.loads(body)['job'] is None
+
+
+def test_render_rate_limit_uses_real_visitor_ip_and_invalid_links_do_not_count(public_server, monkeypatch):
+    monkeypatch.setenv('RENDER_EXTERNAL_URL', 'https://moin.example')
+    app, _ = public_server
+    monkeypatch.setattr(app, 'reserve_youtube', lambda url, owner_token=None: 'a' * 24)
+    _, cookie_header, _ = request(public_server, 'GET', '/api/state')
+    cookie = cookie_header.split(';', 1)[0]
+    headers = {'Content-Type': 'application/json', 'CF-Connecting-IP': '203.0.113.4',
+               'X-Moin-Client-IP': '198.51.100.99'}
+    for _ in range(5):
+        status, _, _ = request(public_server, 'POST', '/api/youtube',
+                               body='{"url":"https://example.com/video"}', cookie=cookie,
+                               origin='https://moin.example', extra_headers=headers)
+        assert status == 400
+    assert not app.start_throttle._starts
+    body = '{"url":"https://youtu.be/dQw4w9WgXcQ"}'
+    for _ in range(4):
+        assert request(public_server, 'POST', '/api/youtube', body=body, cookie=cookie,
+                       origin='https://moin.example', extra_headers=headers)[0] == 202
+    assert request(public_server, 'POST', '/api/youtube', body=body, cookie=cookie,
+                   origin='https://moin.example', extra_headers=headers)[0] == 429
+    headers['CF-Connecting-IP'] = '203.0.113.5'
+    assert request(public_server, 'POST', '/api/youtube', body=body, cookie=cookie,
+                   origin='https://moin.example', extra_headers=headers)[0] == 202
+    assert '198.51.100.99' not in app.start_throttle._starts
 
 
 def test_render_demo_exposes_ephemeral_state_and_health(tmp_path, monkeypatch):

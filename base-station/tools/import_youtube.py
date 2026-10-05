@@ -45,15 +45,14 @@ def canonical_url(value: str) -> tuple[str, str]:
     query = parse_qs(parsed.query, keep_blank_values=True)
     if "list" in query:
         raise ValueError("playlists are unsupported; provide one recorded video URL")
-    if set(query) - {"v", "si", "feature"}:
-        raise ValueError("unsupported YouTube URL parameters")
+    # Share links often carry timestamps and tracking fields. We use only the
+    # video ID and discard every other parameter when building the canonical URL.
 
     if parsed.hostname == "youtu.be":
         video_id = parsed.path.removeprefix("/")
         if "/" in video_id or "v" in query:
             raise ValueError("use a canonical youtu.be/VIDEO_ID URL without extra parameters")
     elif parsed.path == "/watch":
-        query = parse_qs(parsed.query, keep_blank_values=True)
         if "v" not in query or len(query["v"]) != 1:
             if "list" in query:
                 raise ValueError("playlists are unsupported; provide one recorded video URL")
