@@ -7,10 +7,14 @@ meanings, safety decisions, and generated playback. A three-page hosted pilot
 has been prepared but has not yet been deployed or latency-tested.
 
 This repository contains source code, design assets, specs, and documented
-evaluation summaries. It excludes provider keys, source audio, raw human-review
-exports, generated media, model weights, and the locally assembled Qur'an
-rendering registry. Read [repository contents and reproducibility](docs/repository.md)
+evaluation summaries. It includes the attributed QuranEnc rendering registry.
+It excludes provider keys, source audio, raw human-review exports, generated
+media, and model weights. Read [repository contents and reproducibility](docs/repository.md)
 before using a clean checkout.
+
+The [scientific source pack](docs/scientific-sources/README.md) records why Moin
+uses QuranEnc for Qur'anic renderings, includes the challenge reference document,
+and provides accurate Arabic slide copy describing that use.
 
 ## Included
 
@@ -35,7 +39,7 @@ python3.12 -m venv .venv
 ```
 
 Then open <http://127.0.0.1:8787>. The application is local and experimental.
-Processing requires the separately assembled trusted rendering registry
+Processing requires the bundled trusted rendering registry
 described in [the source research](base-station/benchmark-data/rendering-research.md)
 and the chosen provider credentials; without them, processing fails closed.
 Benchmark output is not a claim that a model has won human meaning review.

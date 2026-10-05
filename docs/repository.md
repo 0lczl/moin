@@ -17,15 +17,18 @@ pages in `base-station/moin_studio/static/` are served by it. See
 | `base-station/tests/` | Unit and route tests, with synthetic rendering data for clean-checkout tests |
 | `.specs/`, `PROJECT-LOG.md` | Product decisions, protocol, aggregate evidence, and limitations |
 | `brand/`, `presentation/` | Current identity and judge presentation assets |
+| `docs/scientific-sources/` | Challenge reference PDF, QuranEnc source selection, integrity metadata, and Arabic slide copy |
 
 Local recordings, model downloads, user jobs, raw benchmark runs, blind review
-exports, API keys, and the assembled QuranEnc registry are Git-ignored. They
+exports, and API keys are Git-ignored. They
 remain in the operator workspace and are **not deleted** by this cleanup. The
 aggregate ASR and English-review findings are recorded in `PROJECT-LOG.md`;
 the underlying private files can be inspected locally by the project owner.
-The registry is withheld because its publisher terms include attribution,
-version, notes, and update obligations that must be checked before redistribution.
-Its exact inputs and assembly method are described in
+The attributed QuranEnc registry is tracked in Git as the explicit exception
+for published rendering data. Its notice is in [QURANENC_NOTICE.md](../QURANENC_NOTICE.md);
+the [scientific source pack](scientific-sources/README.md) links it to the
+challenge reference. Publisher attribution, versions, notes, and update
+obligations still apply. Its exact inputs and assembly method are described in
 `base-station/benchmark-data/rendering-research.md` and
 `base-station/tools/prepare_renderings.py`.
 
@@ -43,16 +46,16 @@ python3.12 -m venv .venv
 
 Two ASR integration tests skip when the private nine-clip audio corpus is not
 present. A complete local run executes them. Synthetic renderings keep all
-other tests runnable without publishing the trusted registry. Full recording
-processing and public deployment still require the operator's assembled
-registry and server-side provider credentials; the server fails closed when
+other tests independent of the full trusted registry. Full recording
+processing and public deployment require the bundled registry and server-side
+provider credentials; the server fails closed when
 they are missing.
 
-The prepared deployment bundle includes the local registry when built on the
+The prepared deployment bundle includes the registry when built on the
 operator's machine with `python3 tools/package_hosted.py --out ...`. Do not
-upload that bundle or `.env` to a public repository. A clone without the
-registry is useful for code review and tests, but cannot run the complete
-translation pipeline until that asset is provisioned.
+upload that bundle or `.env` to a public repository. A clean clone includes
+the published registry; provider credentials and model dependencies still need
+to be configured before running the complete translation pipeline.
 
 ## Review boundaries
 

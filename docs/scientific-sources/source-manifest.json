@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-05",
+  "scope": "Documentation and source selection only; no new application integration.",
+  "challenge_reference": {
+    "file": "source_AI_challenge.pdf",
+    "title": "المرجعية والحزمة العلمية والبيانات",
+    "edition_as_printed": "20 / 3 / 1448",
+    "sha256": "446911252f2012d36afe52db3e9afaf0dae52615da34e134aa4e95a199cd65bf",
+    "quranenc_evidence_page": 9,
+    "content_levels_page": 2
+  },
+  "selected_source": {
+    "name": "QuranEnc",
+    "url": "https://quranenc.com/",
+    "use": "Published Qur’anic renderings in the existing recognition and routing path; not generated lesson translation.",
+    "registry": "../../base-station/benchmark-data/staging-renderings/renderings.quranenc.json",
+    "sha256": "d94c4fa5d961a25390e1bc4da88519e961113acd9e77bdaaee3bf99233690317",
+    "verse_count": 6236,
+    "surah_count": 114,
+    "english": {
+      "translation": "Rowwad Translation Center",
+      "version": "1.0.19"
+    },
+    "french": {
+      "translation": "Rachid Maach",
+      "version": "1.0.3"
+    },
+    "notice": "../../QURANENC_NOTICE.md"
+  },
+  "verification_limits": [
+    "Local registry and supplied reference were checked; live publisher editions were not refreshed.",
+    "No claim of independent review of every translation.",
+    "Content-level classification and a complete human referral workflow were not implemented by this task."
+  ]
+}
