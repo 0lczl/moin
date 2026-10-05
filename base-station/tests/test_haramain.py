@@ -27,6 +27,7 @@ def test_prepared_lesson_opens_for_every_visitor_without_processing(haramain_ser
     status, payload = call(haramain_service, 'GET', f'/api/haramain/videos/{video_id}')
     job = json.loads(payload)['job']
     assert status == 200 and job['state'] == 'completed' and job['prepared'] is True
+    assert job['original_audio'] is True
     assert app.list_jobs() == []
 
     status, payload = call(haramain_service, 'GET', f'/api/jobs/{job["id"]}/result')
@@ -38,7 +39,9 @@ def test_prepared_lesson_opens_for_every_visitor_without_processing(haramain_ser
         status, audio = call(haramain_service, 'GET', f'/media/{job["id"]}/full-{language}.mp3',
                              Range='bytes=0-15')
         assert status == 206 and len(audio) == 16
-    assert call(haramain_service, 'GET', f'/media/{job["id"]}/source.wav')[0] == 404
+    status, arabic_audio = call(haramain_service, 'GET', f'/media/{job["id"]}/source.wav',
+                                Range='bytes=0-15')
+    assert status == 206 and len(arabic_audio) == 16
 
     status, payload = call(haramain_service, 'POST', f'/api/haramain/videos/{video_id}/process',
                            b'{}', **auth(haramain_service))

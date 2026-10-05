@@ -453,7 +453,7 @@ async function renderReader(container, job) {
       reader.append(make('p', 'status-panel caution', t('caution')));
     }
     let original = null;
-    if (!job.prepared) {
+    if (!job.prepared || job.original_audio) {
       const player = make('div', 'original-player');
       const label = make('label', '', t('original'));
       label.htmlFor = 'original-audio';

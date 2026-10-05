@@ -248,15 +248,16 @@ class Studio:
                     or manifest.get('catalog_version') != self.catalog_version()):
                 return None
             files = manifest['files']
-            if not isinstance(files, dict) or 'result.json' not in files:
+            if not isinstance(files, dict) or 'result.json' not in files or 'source.wav' not in files:
                 return None
             for name, digest in files.items():
-                if (not re.fullmatch(r'(?:result\.json|full-(?:en|fr)\.mp3|segment-\d{4,}-(?:en|fr)\.mp3)', name)
+                if (not re.fullmatch(r'(?:result\.json|source\.wav|full-(?:en|fr)\.mp3|segment-\d{4,}-(?:en|fr)\.mp3)', name)
                         or not re.fullmatch(r'[0-9a-f]{64}', digest)
                         or hashlib.sha256((folder / name).read_bytes()).hexdigest() != digest):
                     return None
             result = json.loads((folder / 'result.json').read_text())
-            if not result.get('segments'):
+            if (not result.get('segments')
+                    or result.get('source', {}).get('canonical_sha256') != files['source.wav']):
                 return None
             for language in ('en', 'fr'):
                 if f'full-{language}.mp3' not in files:
@@ -267,6 +268,7 @@ class Studio:
             return {'id': self.prepared_id(video['id']), 'state': 'completed',
                     'source': 'prepared', 'catalog_video_id': video['id'],
                     'catalog_version': self.catalog_version(), 'prepared': True,
+                    'original_audio': True,
                     'failures': 0, 'withheld': 0, 'missing_speech': 0,
                     'message': 'Ready to read and listen'}
         except (OSError, ValueError, KeyError, TypeError):
