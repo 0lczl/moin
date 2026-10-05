@@ -303,6 +303,14 @@ class Studio:
                 return HARAMAIN_PREPARED / video['id']
         return None
 
+    def prepared_youtube(self, url):
+        canonical, video_id = canonical_url(url)
+        try:
+            _, video = self.catalog_video(video_id)
+        except KeyError:
+            return None
+        return self.prepared_job(video) if video['url'] == canonical else None
+
     def catalog_audio(self, url):
         """Use verified source audio packaged for the small approved catalog."""
         canonical, video_id = canonical_url(url)
@@ -948,7 +956,9 @@ class Handler(BaseHTTPRequestHandler):
                 body = json.loads(self.rfile.read(length).decode('utf-8'))
                 if not isinstance(body, dict) or set(body) != {'url'} or not isinstance(body['url'], str):
                     raise ValueError('Enter one recorded YouTube link.')
-                canonical_url(body['url'])
+                prepared = app.prepared_youtube(body['url'])
+                if prepared:
+                    return self.send_json({'id': prepared['id'], 'prepared': True}, 202)
                 if app.public_mode:
                     app.start_throttle.check(self.client_ip())
                 jid = app.reserve_youtube(body['url'], owner_token=token)

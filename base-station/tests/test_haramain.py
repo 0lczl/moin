@@ -48,6 +48,13 @@ def test_prepared_lesson_opens_for_every_visitor_without_processing(haramain_ser
     assert status == 202 and json.loads(payload)['created'] is False
     assert app.list_jobs() == []
 
+    status, payload = call(haramain_service, 'POST', '/api/youtube',
+                           json.dumps({'url': f'https://youtu.be/{video_id}?t=30'}),
+                           **{**auth(haramain_service), 'Content-Type': 'application/json'})
+    assert status == 202
+    assert json.loads(payload) == {'id': job['id'], 'prepared': True}
+    assert app.list_jobs() == []
+
 
 def test_packaged_catalog_audio_requires_matching_source_and_digest(tmp_path, monkeypatch):
     video_id = 'D3ofKhOUnXI'
