@@ -44,6 +44,7 @@ EXTENSIONS = {'.wav', '.mp3', '.m4a', '.mp4', '.webm', '.ogg', '.flac', '.aiff',
 YOUTUBE_MAX_SECONDS = 300
 HARAMAIN_STATIC = STATIC / 'haramain'
 HARAMAIN_AUDIO = BASE / 'moin_haramain' / 'audio'
+HARAMAIN_PREPARED = BASE / 'moin_haramain' / 'prepared'
 HARAMAIN_PIPELINE = 'haramain-v1'
 LIVE_STATIC = STATIC / 'live'
 LIVE_ID = r'[A-Za-z0-9_-]{24,32}'
@@ -227,6 +228,56 @@ class Studio:
     def catalog_version(self):
         return f'{HARAMAIN_PIPELINE}:{self.candidate}'
 
+    @staticmethod
+    def prepared_id(video_id):
+        return hashlib.sha256(f'moin-prepared:{video_id}'.encode()).hexdigest()[:24]
+
+    def prepared_job(self, video):
+        """Expose a reviewed, packaged translation without starting a new job."""
+        folder = HARAMAIN_PREPARED / video['id']
+        manifest_path = folder / 'manifest.json'
+        if not manifest_path.is_file():
+            return None
+        try:
+            manifest = json.loads(manifest_path.read_text())
+            catalog, current = self.catalog_video(video['id'])
+            source = next(item for item in catalog['sources'] if item['id'] == current['source_id'])
+            if (current != video or manifest.get('video_id') != video['id']
+                    or manifest.get('source_url') != video['url']
+                    or manifest.get('channel_id') != source['channel_id']
+                    or manifest.get('catalog_version') != self.catalog_version()):
+                return None
+            files = manifest['files']
+            if not isinstance(files, dict) or 'result.json' not in files:
+                return None
+            for name, digest in files.items():
+                if (not re.fullmatch(r'(?:result\.json|full-(?:en|fr)\.mp3|segment-\d{4,}-(?:en|fr)\.mp3)', name)
+                        or not re.fullmatch(r'[0-9a-f]{64}', digest)
+                        or hashlib.sha256((folder / name).read_bytes()).hexdigest() != digest):
+                    return None
+            result = json.loads((folder / 'result.json').read_text())
+            if not result.get('segments'):
+                return None
+            for language in ('en', 'fr'):
+                if f'full-{language}.mp3' not in files:
+                    return None
+                if any(item.get('synthesis', {}).get(language, {}).get('file') not in files
+                       for item in result['segments']):
+                    return None
+            return {'id': self.prepared_id(video['id']), 'state': 'completed',
+                    'source': 'prepared', 'catalog_video_id': video['id'],
+                    'catalog_version': self.catalog_version(), 'prepared': True,
+                    'failures': 0, 'withheld': 0, 'missing_speech': 0,
+                    'message': 'Ready to read and listen'}
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+
+    def prepared_output(self, jid):
+        for video in self.catalog()['videos']:
+            if self.prepared_id(video['id']) == jid and self.prepared_job(video):
+                return HARAMAIN_PREPARED / video['id']
+        return None
+
     def catalog_audio(self, url):
         """Use verified source audio packaged for the small approved catalog."""
         canonical, video_id = canonical_url(url)
@@ -251,6 +302,9 @@ class Studio:
         return folder
 
     def catalog_job(self, video):
+        prepared = self.prepared_job(video)
+        if prepared:
+            return prepared
         version = self.catalog_version()
         with self.lock:
             matches = [job for job in self.jobs.values()
@@ -266,6 +320,9 @@ class Studio:
             raise VideoUnavailable('This recording is currently unavailable. Open its official source for details.')
         if video['duration_seconds'] > YOUTUBE_MAX_SECONDS:
             raise VideoTooLong('This recording is longer than the current five-minute processing limit.')
+        prepared = self.prepared_job(video)
+        if prepared:
+            return prepared, False
         with self.lock:
             existing = self.catalog_job(video)
             if existing and (existing['state'] in {'queued', 'processing'}
@@ -507,6 +564,9 @@ class Studio:
     def output(self, jid):
         if jid == 'demo':
             return BASE / 'machine-runs/first-recorded-demo'
+        prepared = self.prepared_output(jid)
+        if prepared:
+            return prepared
         if not re.fullmatch('[0-9a-f]{24}', jid) or jid not in self.jobs:
             raise KeyError(jid)
         return self.root / jid / 'output'
@@ -536,6 +596,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def can_read_job(self, app, jid):
         if jid == 'demo':
+            return True
+        if app.prepared_output(jid):
             return True
         job = app.jobs.get(jid)
         return bool(job and (not app.public_mode or can_access(job, self.session_token())))
@@ -749,7 +811,8 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({'error':'Result is not available'},404)
                 output = app.output(match[1])
                 result = json.loads((output/'result.json').read_text())
-                app.make_playback(output, result)
+                if not app.prepared_output(match[1]):
+                    app.make_playback(output, result)
                 return self.send_json(result)
             match = re.fullmatch(r'/media/([a-z0-9]+)/([a-zA-Z0-9_.-]+)',path)
             if match:

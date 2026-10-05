@@ -419,7 +419,7 @@ function renderJob(video, job) {
       retry.onclick = () => requestProcessing(video, retry, container, true);
       container.append(retry);
     }
-    renderReader(container, job.id);
+    renderReader(container, job);
     return;
   }
   const box = make('div', 'processing-panel');
@@ -438,7 +438,8 @@ function renderJob(video, job) {
   }
   container.append(box);
 }
-async function renderReader(container, jobId) {
+async function renderReader(container, job) {
+  const jobId = job.id;
   const placeholder = make('p', 'loading', tr('Opening the saved result…', 'جارٍ فتح النتيجة المحفوظة…'));
   container.append(placeholder);
   try {
@@ -451,20 +452,23 @@ async function renderReader(container, jobId) {
     if (result.segments?.some(item => item.safety?.outcome === 'review_required')) {
       reader.append(make('p', 'status-panel caution', t('caution')));
     }
-    const player = make('div', 'original-player');
-    const label = make('label', '', t('original'));
-    label.htmlFor = 'original-audio';
-    const original = make('audio');
-    original.id = 'original-audio';
-    original.controls = true;
-    original.preload = 'metadata';
-    original.src = `/media/${jobId}/source.wav`;
-    original.onplay = () => {
-      if (activeSpeechAudio) activeSpeechAudio.pause();
-      activeSpeechAudio = null;
-    };
-    player.append(label, original);
-    reader.append(player);
+    let original = null;
+    if (!job.prepared) {
+      const player = make('div', 'original-player');
+      const label = make('label', '', t('original'));
+      label.htmlFor = 'original-audio';
+      original = make('audio');
+      original.id = 'original-audio';
+      original.controls = true;
+      original.preload = 'metadata';
+      original.src = `/media/${jobId}/source.wav`;
+      original.onplay = () => {
+        if (activeSpeechAudio) activeSpeechAudio.pause();
+        activeSpeechAudio = null;
+      };
+      player.append(label, original);
+      reader.append(player);
+    }
     for (const language of ['en', 'fr']) {
       const complete = result.segments?.length && result.segments.every(item => {
         const speech = item.synthesis?.[language];
@@ -504,7 +508,7 @@ async function renderReader(container, jobId) {
       };
       fallbackButton.onclick = () => {
         if (activeSpeechAudio === fallbackAudio && !fallbackAudio.paused) { fallbackAudio.pause(); return; }
-        original.pause();
+        original?.pause();
         if (activeSpeechAudio) activeSpeechAudio.pause();
         activeSpeechAudio = fallbackAudio;
         segmentIndex = 0;
@@ -513,7 +517,7 @@ async function renderReader(container, jobId) {
       translatedAudio.onerror = () => { translatedAudio.hidden = true; fallbackButton.hidden = false; };
       translatedLabel.htmlFor = translatedAudio.id;
       translatedAudio.onplay = () => {
-        original.pause();
+        original?.pause();
         if (activeSpeechAudio && activeSpeechAudio !== translatedAudio) activeSpeechAudio.pause();
         activeSpeechAudio = translatedAudio;
       };
@@ -544,8 +548,13 @@ async function renderReader(container, jobId) {
         seek.onclick = () => {
           if (activeSpeechAudio) activeSpeechAudio.pause();
           activeSpeechAudio = null;
-          original.currentTime = item.start_seconds || 0;
-          original.play().catch(() => {});
+          if (original) {
+            original.currentTime = item.start_seconds || 0;
+            original.play().catch(() => {});
+          } else {
+            const seconds = Math.max(0, Math.floor(item.start_seconds || 0));
+            window.open(`${catalog.videos.find(video => video.id === currentVideo).url}&t=${seconds}s`, '_blank', 'noopener,noreferrer');
+          }
         };
         const body = make('div', 'segment-body');
         const missingTranslation = item.result?.failure?.code === 'credential_unavailable' ? t('credentialMissing') : t('noTranslation');
@@ -564,7 +573,7 @@ async function renderReader(container, jobId) {
             listen.type = 'button';
             listen.onclick = () => {
               if (audio.paused) {
-                original.pause();
+                original?.pause();
                 if (activeSpeechAudio && activeSpeechAudio !== audio) activeSpeechAudio.pause();
                 activeSpeechAudio = audio;
                 audio.play().then(() => { listen.textContent = t('pause'); }).catch(() => { listen.textContent = t('noSpeech'); });
@@ -593,7 +602,7 @@ async function renderReader(container, jobId) {
         if (activeSpeechAudio) activeSpeechAudio.pause();
         activeSpeechAudio = null;
         activeLanguage = code;
-        original.pause();
+        original?.pause();
         drawSegments();
       };
       button.onkeydown = event => {

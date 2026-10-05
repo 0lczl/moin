@@ -21,6 +21,31 @@ def test_seed_is_official_and_six_clips_are_within_import_limit():
     assert all(v['duration_seconds'] <= studio_server.YOUTUBE_MAX_SECONDS for v in catalog['videos'])
 
 
+def test_prepared_lesson_opens_for_every_visitor_without_processing(haramain_service):
+    video_id = 'yQKLfTSoWHg'
+    app = haramain_service[0]
+    status, payload = call(haramain_service, 'GET', f'/api/haramain/videos/{video_id}')
+    job = json.loads(payload)['job']
+    assert status == 200 and job['state'] == 'completed' and job['prepared'] is True
+    assert app.list_jobs() == []
+
+    status, payload = call(haramain_service, 'GET', f'/api/jobs/{job["id"]}/result')
+    result = json.loads(payload)
+    assert status == 200 and len(result['segments']) == 5
+    for language in ('en', 'fr'):
+        assert all(segment['synthesis'][language]['status'] == 'created'
+                   for segment in result['segments'])
+        status, audio = call(haramain_service, 'GET', f'/media/{job["id"]}/full-{language}.mp3',
+                             Range='bytes=0-15')
+        assert status == 206 and len(audio) == 16
+    assert call(haramain_service, 'GET', f'/media/{job["id"]}/source.wav')[0] == 404
+
+    status, payload = call(haramain_service, 'POST', f'/api/haramain/videos/{video_id}/process',
+                           b'{}', **auth(haramain_service))
+    assert status == 202 and json.loads(payload)['created'] is False
+    assert app.list_jobs() == []
+
+
 def test_packaged_catalog_audio_requires_matching_source_and_digest(tmp_path, monkeypatch):
     video_id = 'D3ofKhOUnXI'
     url = f'https://www.youtube.com/watch?v={video_id}'

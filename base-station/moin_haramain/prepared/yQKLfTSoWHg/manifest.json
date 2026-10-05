@@ -1,0 +1,21 @@
+{
+  "video_id": "yQKLfTSoWHg",
+  "source_url": "https://www.youtube.com/watch?v=yQKLfTSoWHg",
+  "channel_id": "UC0XNCc-DU8J5_ksR-eufPaw",
+  "catalog_version": "haramain-v1:deepl-v1",
+  "files": {
+    "result.json": "8c42fe9493cd59ce6ada67e5c2c0a93fd2cb717aee3ea1a24a1cfb8b77c0eff4",
+    "full-en.mp3": "6978cd080991143652761efffc21002542bfe4b23f52aac16c22c6f3aa0dd74e",
+    "full-fr.mp3": "c416d9aae3bab4d413b7ac46924c9b73aab115cdc41250eb5af02c782db4790e",
+    "segment-0001-en.mp3": "a5efa0ebbda215c82691b32c162e7bfcc3b75f1ef3d8fbc1a3ef44a244025bab",
+    "segment-0001-fr.mp3": "f9a8c8d35a4c008be7d28f8c31661a725f2d6f1724822c9d202ee2c4b3e126c5",
+    "segment-0002-en.mp3": "4a007bb21ba9d9571cf483d338b835ca91bc31c1d2866e56512c5d8ecb46e42e",
+    "segment-0002-fr.mp3": "b4dbe796d42bdd6923e41b54f6620d2c47dbb63e68a06638b86c184576964dd5",
+    "segment-0003-en.mp3": "33ce14b9ca13936242b2e2c752aae15b79d4e8765f56d4fcdd24aaa359b91504",
+    "segment-0003-fr.mp3": "c7518ed9438557ee6c04f717ca9755670fb85ad9f4ef506a37aa4e77da21d4d9",
+    "segment-0004-en.mp3": "9f3ca443b2eea9206eb9d334d9f6f44454248b53aa7323c8ce0d9f87c523da34",
+    "segment-0004-fr.mp3": "137fb88ee6aca36d1ad398503ce76a9f155a2ef004156ae710e71dc1d0060176",
+    "segment-0005-en.mp3": "5a05f9781ca821e261902adf3a214b59f6bbbf4e87eaf6d6454ff9a858c0a437",
+    "segment-0005-fr.mp3": "cd1527a358bfc1066598b9af1628f4c4df5a10a088f01040f3c01f8d7f37fd44"
+  }
+}

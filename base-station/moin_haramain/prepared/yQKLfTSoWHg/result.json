@@ -1,0 +1,352 @@
+{
+  "kind": "experimental_recorded_audio",
+  "created_at": "2026-10-04T17:53:58.404311+00:00",
+  "experimental": true,
+  "winner_claim": false,
+  "boundary_caveat": "Segments are processed independently; speech crossing a boundary may lose context.",
+  "source": {
+    "original_name": "input.wav",
+    "original_sha256": "b9fd4f1795d77d47a7a3a5b242361ec96fa5d7e67888b97c7420ded164800120",
+    "canonical_sha256": "b9fd4f1795d77d47a7a3a5b242361ec96fa5d7e67888b97c7420ded164800120",
+    "format": "mono 16 kHz PCM16 WAV"
+  },
+  "candidate": {
+    "id": "deepl-v1",
+    "config": {
+      "id": "deepl-v1",
+      "name": "Whisper large-v3 + DeepL API Free v2",
+      "adapter": "deepl",
+      "asr": {
+        "model": "Systran/faster-whisper-large-v3",
+        "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+        "device": "cpu",
+        "compute_type": "int8",
+        "beam_size": 5,
+        "vad_filter": false
+      },
+      "translation": {
+        "model": "deepl-text-translation-api",
+        "revision": "v2",
+        "base_url": "https://api-free.deepl.com",
+        "endpoint": "/v2/translate",
+        "credential_env": "DEEPL_AUTH_KEY",
+        "source_lang": "AR",
+        "target_lang_en": "EN-US",
+        "target_lang_fr": "FR"
+      },
+      "settings": {
+        "timeout_seconds": 60
+      },
+      "prompts": {
+        "en": "",
+        "fr": ""
+      }
+    },
+    "runtime": {
+      "python": "3.14.3",
+      "packages": {
+        "faster-whisper": "1.2.1",
+        "huggingface-hub": "1.25.1",
+        "transformers": "5.14.1",
+        "torch": "2.13.0",
+        "mlx": "0.32.0",
+        "mlx-lm": "0.31.3"
+      },
+      "asr": {
+        "provider": "local",
+        "model": "Systran/faster-whisper-large-v3",
+        "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+        "identity_kind": "pinned_checkpoint"
+      }
+    }
+  },
+  "renderings": {
+    "sha256": "d94c4fa5d961a25390e1bc4da88519e961113acd9e77bdaaee3bf99233690317",
+    "schema_version": 1
+  },
+  "synthesis": {
+    "provider": "elevenlabs",
+    "model": "eleven_multilingual_v2",
+    "output_format": "mp3_44100_128",
+    "voices": {
+      "en": "Q2DodP8VbBgCc0KBzBTw",
+      "fr": "O2TxFmt2yYpiOSygumnt"
+    },
+    "credential_env": "ELEVENLABS_API_KEY"
+  },
+  "segment_seconds": 30,
+  "timing_ms": {
+    "canonicalize": 48.035,
+    "segmenting": 2.871,
+    "processing": 139262.597,
+    "artifacts": 1.049,
+    "total": 139593.193
+  },
+  "segments": [
+    {
+      "number": 1,
+      "start_seconds": 0.0,
+      "end_seconds": 30.0,
+      "result": {
+        "arabic": "والله عز وجل  وصف القرآن  في مواضع  أنه هدى للمتقين  ووصفه جل وعلا  في مواضع بأنه هدى للناس  في بعض المواضع  وصفه تبارك وتعالى  بأنه هدى للمتقين  كما في أول سورة البقرة  اشتركوا في القناة",
+        "en": "Allah, the Exalted and Glorious, has described the Qur’an in several places as guidance for the righteous, and He, the Exalted and Glorious, has described it in other places as guidance for all people. In some passages, He, the Blessed and Exalted, has described it as guidance for the righteous, as in the beginning of Surah Al-Baqarah. It is mentionedon the channel",
+        "fr": "Allah, le Tout-Puissant, a décrit le Coran à plusieurs reprises comme un guide pour les pieux, et Il, le Très-Haut, l’a décrit à d’autres occasions comme un guide pour les hommes. À certains endroits, Il, béni et exalté soit-Il, l’a qualifié de guide pour les pieux, comme au début de la sourate Al-Baqara. Il a égalementsur la chaîne",
+        "timing_ms": {
+          "model_load": 0.015,
+          "asr": 24660.368,
+          "en": 954.534,
+          "fr": 875.189,
+          "translation_wall": 955.31,
+          "total": 26212.042
+        },
+        "uncertainty": null,
+        "failure": null
+      },
+      "pre_translation_safety": {
+        "outcome": "ordinary_translation",
+        "en": "",
+        "fr": "",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "safety": {
+        "outcome": "ordinary_translation",
+        "en": "Allah, the Exalted and Glorious, has described the Qur’an in several places as guidance for the righteous, and He, the Exalted and Glorious, has described it in other places as guidance for all people. In some passages, He, the Blessed and Exalted, has described it as guidance for the righteous, as in the beginning of Surah Al-Baqarah. It is mentionedon the channel",
+        "fr": "Allah, le Tout-Puissant, a décrit le Coran à plusieurs reprises comme un guide pour les pieux, et Il, le Très-Haut, l’a décrit à d’autres occasions comme un guide pour les hommes. À certains endroits, Il, béni et exalté soit-Il, l’a qualifié de guide pour les pieux, comme au début de la sourate Al-Baqara. Il a égalementsur la chaîne",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "synthesis": {
+        "en": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "Q2DodP8VbBgCc0KBzBTw",
+          "file": "segment-0001-en.mp3",
+          "timing_ms": 3978.958
+        },
+        "fr": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "O2TxFmt2yYpiOSygumnt",
+          "file": "segment-0001-fr.mp3",
+          "timing_ms": 3794.168
+        }
+      },
+      "synthesis_wall_ms": 3982.039
+    },
+    {
+      "number": 2,
+      "start_seconds": 30.0,
+      "end_seconds": 60.0,
+      "result": {
+        "arabic": "ألف لام ميم ذلك الكتاب لا ريب فيه هدى للمتقين  وصفه بأنه هدى للناس  كما أيضا جاء في سورة البقرة  في قوله سبحانه وتعالى  شهر رمضان الذي أنزل فيه القرآن  شهر رمضان الذي أنزل فيه القرآن هدى للناس  وبينات من الهدى والفرقان  شهر رمضان",
+        "en": "Alif, Lam, Mim. This is the Book; there is no doubt in it. It is guidance for the righteous.  It is described as guidance for mankind,  as is also stated in Surah Al-Baqarah  in the words of Allah, the Exalted:  “The month of Ramadan, in which the Qur’an was revealed—  the month of Ramadan, in which the Qur’an was revealed—is guidance for mankind.”  And it explainsthe clearest of guidance and the Criterion. The month of Ramadan",
+        "fr": "Alif, Lam, Mim. Ce Livre, sur lequel il n’y a aucun doute, est une guidance pour les pieux. Il est décrit comme une guidance pour les hommes, comme cela est également mentionné dans la sourate Al-Baqara, dans les paroles de Dieu, le Très-Haut : « Le mois de Ramadan, au cours duquel le Coran a été révélé. Le mois de Ramadan, au cours duquel le Coran a été révélé, est une guidance pour les hommes. » Et il a précisépar la guidance et le Critère de distinction. Le mois de Ramadan",
+        "timing_ms": {
+          "model_load": 0.02,
+          "asr": 26414.544,
+          "en": 2486.048,
+          "fr": 1144.657,
+          "translation_wall": 2486.286,
+          "total": 29176.228
+        },
+        "uncertainty": null,
+        "failure": null
+      },
+      "pre_translation_safety": {
+        "outcome": "review_required",
+        "en": null,
+        "fr": null,
+        "reason": "possible_quran_or_mixed_speech",
+        "sources": []
+      },
+      "safety": {
+        "outcome": "review_required",
+        "en": "Alif, Lam, Mim. This is the Book; there is no doubt in it. It is guidance for the righteous.  It is described as guidance for mankind,  as is also stated in Surah Al-Baqarah  in the words of Allah, the Exalted:  “The month of Ramadan, in which the Qur’an was revealed—  the month of Ramadan, in which the Qur’an was revealed—is guidance for mankind.”  And it explainsthe clearest of guidance and the Criterion. The month of Ramadan",
+        "fr": "Alif, Lam, Mim. Ce Livre, sur lequel il n’y a aucun doute, est une guidance pour les pieux. Il est décrit comme une guidance pour les hommes, comme cela est également mentionné dans la sourate Al-Baqara, dans les paroles de Dieu, le Très-Haut : « Le mois de Ramadan, au cours duquel le Coran a été révélé. Le mois de Ramadan, au cours duquel le Coran a été révélé, est une guidance pour les hommes. » Et il a précisépar la guidance et le Critère de distinction. Le mois de Ramadan",
+        "reason": "possible_quran_or_mixed_speech",
+        "sources": []
+      },
+      "synthesis": {
+        "en": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "Q2DodP8VbBgCc0KBzBTw",
+          "file": "segment-0002-en.mp3",
+          "timing_ms": 5110.269
+        },
+        "fr": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "O2TxFmt2yYpiOSygumnt",
+          "file": "segment-0002-fr.mp3",
+          "timing_ms": 4935.483
+        }
+      },
+      "synthesis_wall_ms": 5112.902
+    },
+    {
+      "number": 3,
+      "start_seconds": 60.0,
+      "end_seconds": 90.0,
+      "result": {
+        "arabic": "فالقرآن هدى للناس لأنه جاء مجتملاً على ما فيه هدايتهم  وصلاحهم وسعادتهم وفلاحهم في دنياهم وأخراهم  وهدى للمتقين باعتبار أن المتقين هم الذين اهتدوا به",
+        "en": "The Qur'an is guidance for all people because it comprehensively contains what leads them to guidance, righteousness, happiness, and success in this world and the Hereafter; and it is guidance for the righteous, since the righteous are those who have been guided by it.",
+        "fr": "Le Coran est une guidance pour les hommes, car il contient tout ce qui est nécessaire à leur guidance, à leur bien-être, à leur bonheur et à leur réussite dans cette vie et dans l’au-delà ; et il est une guidance pour les pieux, dans la mesure où ce sont eux qui ont trouvé la bonne voie grâce à lui.",
+        "timing_ms": {
+          "model_load": 0.021,
+          "asr": 23716.31,
+          "en": 789.72,
+          "fr": 1806.11,
+          "translation_wall": 1806.613,
+          "total": 26013.614
+        },
+        "uncertainty": null,
+        "failure": null
+      },
+      "pre_translation_safety": {
+        "outcome": "ordinary_translation",
+        "en": "",
+        "fr": "",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "safety": {
+        "outcome": "ordinary_translation",
+        "en": "The Qur'an is guidance for all people because it comprehensively contains what leads them to guidance, righteousness, happiness, and success in this world and the Hereafter; and it is guidance for the righteous, since the righteous are those who have been guided by it.",
+        "fr": "Le Coran est une guidance pour les hommes, car il contient tout ce qui est nécessaire à leur guidance, à leur bien-être, à leur bonheur et à leur réussite dans cette vie et dans l’au-delà ; et il est une guidance pour les pieux, dans la mesure où ce sont eux qui ont trouvé la bonne voie grâce à lui.",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "synthesis": {
+        "en": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "Q2DodP8VbBgCc0KBzBTw",
+          "file": "segment-0003-en.mp3",
+          "timing_ms": 4312.047
+        },
+        "fr": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "O2TxFmt2yYpiOSygumnt",
+          "file": "segment-0003-fr.mp3",
+          "timing_ms": 4355.839
+        }
+      },
+      "synthesis_wall_ms": 4358.484
+    },
+    {
+      "number": 4,
+      "start_seconds": 90.0,
+      "end_seconds": 120.0,
+      "result": {
+        "arabic": "وانتفعوا به  ولهذا القرآن يوصف بأنه هدى وصفا عاما يتناول الناس كلهم  ويوصف بالهدى وصفا خاصا يتناول المتقين من عباد الله  أولئك أي عموم الناس القرآن هدى لهم أي بالقوة  موسيقى",
+        "en": "And they benefited from it; for this reason, the Qur’an is described as guidance in a general sense, applying to all people, and as guidance in a specific sense, applying to the righteous among God’s servants—that is, for the general public, the Qur’an is guidance for them—that is, through its power and music.",
+        "fr": "Et qu’ils en tirent profit. C’est pourquoi le Coran est décrit comme une guidance dans un sens général, s’adressant à tous les hommes, et comme une guidance dans un sens particulier, s’adressant aux pieux parmi les serviteurs de Dieu. Pour ces derniers, c’est-à-dire pour le grand public, le Coran est une guidance, c’est-à-dire par la force, la musique.",
+        "timing_ms": {
+          "model_load": 0.023,
+          "asr": 26066.931,
+          "en": 842.111,
+          "fr": 1007.14,
+          "translation_wall": 1007.533,
+          "total": 27587.328
+        },
+        "uncertainty": null,
+        "failure": null
+      },
+      "pre_translation_safety": {
+        "outcome": "ordinary_translation",
+        "en": "",
+        "fr": "",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "safety": {
+        "outcome": "ordinary_translation",
+        "en": "And they benefited from it; for this reason, the Qur’an is described as guidance in a general sense, applying to all people, and as guidance in a specific sense, applying to the righteous among God’s servants—that is, for the general public, the Qur’an is guidance for them—that is, through its power and music.",
+        "fr": "Et qu’ils en tirent profit. C’est pourquoi le Coran est décrit comme une guidance dans un sens général, s’adressant à tous les hommes, et comme une guidance dans un sens particulier, s’adressant aux pieux parmi les serviteurs de Dieu. Pour ces derniers, c’est-à-dire pour le grand public, le Coran est une guidance, c’est-à-dire par la force, la musique.",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "synthesis": {
+        "en": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "Q2DodP8VbBgCc0KBzBTw",
+          "file": "segment-0004-en.mp3",
+          "timing_ms": 3812.747
+        },
+        "fr": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "O2TxFmt2yYpiOSygumnt",
+          "file": "segment-0004-fr.mp3",
+          "timing_ms": 3659.933
+        }
+      },
+      "synthesis_wall_ms": 3814.238
+    },
+    {
+      "number": 5,
+      "start_seconds": 120.0,
+      "end_seconds": 138.0078125,
+      "result": {
+        "arabic": "والمتقين القرآن هدى لهم بالانتفاع والتأثير انتفعوا به وتأثروا بهداياته",
+        "en": "And for the righteous, the Qur'an is a source of guidance that benefits and influences them; they have benefited from it and been influenced by its guidance.",
+        "fr": "Et pour les pieux, le Coran est une source de guidance qui leur apporte profit et inspiration ; ils en ont tiré profit et ont été inspirés par ses enseignements.",
+        "timing_ms": {
+          "model_load": 0.046,
+          "asr": 9676.6,
+          "en": 689.731,
+          "fr": 595.313,
+          "translation_wall": 690.032,
+          "total": 10763.967
+        },
+        "uncertainty": null,
+        "failure": null
+      },
+      "pre_translation_safety": {
+        "outcome": "ordinary_translation",
+        "en": "",
+        "fr": "",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "safety": {
+        "outcome": "ordinary_translation",
+        "en": "And for the righteous, the Qur'an is a source of guidance that benefits and influences them; they have benefited from it and been influenced by its guidance.",
+        "fr": "Et pour les pieux, le Coran est une source de guidance qui leur apporte profit et inspiration ; ils en ont tiré profit et ont été inspirés par ses enseignements.",
+        "reason": "no_quran_match",
+        "sources": []
+      },
+      "synthesis": {
+        "en": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "Q2DodP8VbBgCc0KBzBTw",
+          "file": "segment-0005-en.mp3",
+          "timing_ms": 2184.604
+        },
+        "fr": {
+          "status": "created",
+          "provider": "elevenlabs",
+          "model": "eleven_multilingual_v2",
+          "voice_id": "O2TxFmt2yYpiOSygumnt",
+          "file": "segment-0005-fr.mp3",
+          "timing_ms": 2184.478
+        }
+      },
+      "synthesis_wall_ms": 2187.308
+    }
+  ]
+}
